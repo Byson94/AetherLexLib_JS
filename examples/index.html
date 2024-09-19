@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversational AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        #chat-container {
+            width: 80%;
+            max-width: 600px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            overflow: hidden;
+        }
+        #chat-box {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ccc;
+        }
+        #chat-box .message {
+            margin-bottom: 10px;
+        }
+        #chat-box .user-message {
+            color: #007bff;
+        }
+        #chat-box .ai-message {
+            color: #28a745;
+        }
+        #input-container {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+        #input-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #input-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        #input-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-box">
+            <!-- Messages will appear here -->
+        </div>
+        <div id="input-container">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+    <script type="module">
+        import { analyzeAndRespond } from '../project_build/AetherLexLib.js'; // Correct import
+
+        function appendMessage(message, type) {
+            const chatBox = document.getElementById('chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.textContent = message;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+        }
+
+        async function handleUserInput() {
+            const userInput = document.getElementById('user-input');
+            const userText = userInput.value.trim();
+            if (userText) {
+                appendMessage(userText, 'user');
+                userInput.value = '';
+                try {
+                    const response = await analyzeAndRespond(userText); // Correct function call
+                    appendMessage(response, 'ai');
+                } catch (error) {
+                    console.error('Error processing response:', error);
+                    appendMessage("Sorry, something went wrong.", 'ai');
+                }
+            }
+        }
+
+        function handleSend() {
+            handleUserInput();
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default behavior of Enter key
+                handleUserInput();
+            }
+        }
+
+        document.getElementById('send-button').addEventListener('click', handleSend);
+        document.getElementById('user-input').addEventListener('keydown', handleEnter); // Event listener for Enter key
+    </script>
+</body>
+</html>
