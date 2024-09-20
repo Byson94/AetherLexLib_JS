@@ -8,7 +8,9 @@ Check out the example at: [AetherLexLib AI Chatbot](https://byson94.github.io/Ae
 This project is under "MIT LICENSE" so it is free and you can use it, modify it etc. but only if you included the copy of the license of the project you used. 
 
 To download it, download the latest update [here](https://github.com/Byson94/AetherLexLib_JS/releases)
+
 OR
+
 Run ```npm i aetherlexlib_js``` to dowload it using npm.
 
 After you've downloaded the .zip, extract it and add the "project_build" and "LICENSE" files to your project to start using it. 
