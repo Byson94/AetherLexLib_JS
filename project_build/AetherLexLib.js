@@ -14,6 +14,9 @@ const responses = {
     gratitude: ["thanks", "thank you", "thx"],
     help: ["help", "assist", "support", "how can I help"],
     confusion: ["huh", "what", "i don't understand"],
+    learning: ["what have you learned", "what do you know now", "what's interesting", "did you learn"],
+    improvement: ["what would you change", "how would you improve", "could you be better"],
+    errors: ["how do you handle mistakes", "what happens when you're wrong", "error handling", "do you make mistakes"]
 };
 
 // Function to parse and index learning data
@@ -105,16 +108,18 @@ function levenshteinDistance(a, b) {
 
 // Function to generate a response based on user input
 function generateResponse(userInput) {
-    const keywordResponses = {
-        greetings: "Hi there! How can I help you today?",
-        farewell: "Goodbye! Have a great day!",
-        affirmations: "Got it! How can I assist you further?",
-        negations: "No problem. Let me know if you need help!",
-        gratitude: "You're welcome!",
-        help: "I can assist you with various tasks. What do you need help with?",
-        confusion: "I'm not sure I understand. Can you please clarify?",
-        questions: "That's an interesting question. Let me help you with that."
-    };
+const keywordResponses = {
+    greetings: "Hi there! How can I help you today?",
+    farewell: "Goodbye! Have a great day!",
+    affirmations: "Got it! How can I assist you further?",
+    negations: "No problem. Let me know if you need help!",
+    gratitude: "You're welcome!",
+    help: "I can assist you with various tasks. What do you need help with?",
+    confusion: "I'm not sure I understand. Can you please clarify?",
+    learning: "I learn from our conversations and try to improve with each interaction. What else would you like to teach me?",
+    improvement: "If I could change something, I'd aim to be more context-aware and adaptive in conversations.",
+    errors: "When I make mistakes, I rely on users like you to guide me by clarifying your questions. I’m always learning from my errors."
+};
 
     for (const [category, response] of Object.entries(keywordResponses)) {
         const bestMatch = findBestMatch(userInput, responses[category]);
