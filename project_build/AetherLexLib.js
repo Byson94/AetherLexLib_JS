@@ -80,17 +80,46 @@ function normalizeText(text) {
 // Function to generate a response based on user input
 function generateResponse(userInput) {
     const keywordResponses = {
-        greetings: "Hi there! How can I help you today?",
-        farewell: "Goodbye! Have a great day!",
-        affirmations: "Got it! How can I assist you further?",
-        negations: "No problem. Let me know if you need help!",
-        gratitude: "You're welcome!",
-        help: "I can assist you with various tasks. What do you need help with?",
-        confusion: "I'm not sure I understand. Can you please clarify?",
+        greetings: [
+            "Hi there! How can I help you today?",
+            "Hello! What can I do for you?",
+            "Hey! Need assistance with something?"
+        ],
+        farewell: [
+            "Goodbye! Have a great day!",
+            "See you later! Take care!",
+            "Farewell! Until next time!"
+        ],
+        affirmations: [
+            "Got it! How can I assist you further?",
+            "Understood! What do you need help with?",
+            "Okay! What's your next question?"
+        ],
+        negations: [
+            "No problem. Let me know if you need help!",
+            "That's fine! Feel free to ask if something comes up.",
+            "Alright! Just ask if you have any questions later."
+        ],
+        gratitude: [
+            "You're welcome!",
+            "Anytime! Happy to help!",
+            "No worries! Glad to assist!"
+        ],
+        help: [
+            "I can assist you with various tasks. What do you need help with?",
+            "How may I assist you today?",
+            "I'm here to help! What do you need?"
+        ],
+        confusion: [
+            "I'm not sure I understand. Can you please clarify?",
+            "Could you explain that a bit more?",
+            "I didn't catch that. Can you rephrase?"
+        ],
     };
 
-    for (const [category, response] of Object.entries(keywordResponses)) {
-        if (findBestMatch(userInput, responses[category])) {
+    for (const [category, responsesArray] of Object.entries(keywordResponses)) {
+        const response = findBestMatch(userInput, responses[category]);
+        if (response) {
             return response;
         }
     }

@@ -6,20 +6,20 @@
     <title>Conversational AI</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
         }
         #chat-container {
-            width: 80%;
+            width: 90%;
             max-width: 600px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 8px;
             background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             height: 500px;
@@ -27,47 +27,76 @@
         }
         #chat-box {
             flex: 1;
-            padding: 10px;
+            padding: 20px;
             overflow-y: auto;
             border-bottom: 1px solid #ccc;
+            background-color: #f8f9fa;
+            position: relative;
         }
         #chat-box .message {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 70%;
         }
         #chat-box .user-message {
-            color: #007bff;
+            background-color: #007bff;
+            color: #fff;
+            align-self: flex-end;
         }
         #chat-box .ai-message {
-            color: #28a745;
+            background-color: #28a745;
+            color: #fff;
+            align-self: flex-start;
         }
         #input-container {
             display: flex;
             padding: 10px;
             border-top: 1px solid #ccc;
+            background-color: #fff;
         }
         #input-container input {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            transition: border 0.3s;
+        }
+        #input-container input:focus {
+            border-color: #007bff;
+            outline: none;
         }
         #input-container button {
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
             border-radius: 5px;
             background-color: #007bff;
             color: #fff;
             cursor: pointer;
             margin-left: 10px;
+            transition: background 0.3s;
         }
         #input-container button:hover {
             background-color: #0056b3;
         }
+        #toggle-theme {
+            margin: 10px;
+            padding: 10px;
+            background-color: #343a40;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #toggle-theme:hover {
+            background-color: #495057;
+        }
     </style>
 </head>
 <body>
+    <button id="toggle-theme">Toggle Dark Mode</button>
     <div id="chat-container">
-        <div id="chat-box">
+        <div id="chat-box" aria-live="polite">
             <!-- Messages will appear here -->
         </div>
         <div id="input-container">
@@ -77,7 +106,7 @@
     </div>
     <script type="module">
         import { analyzeAndRespond } from '../project_build/AetherLexLib.js'; // Correct import
-
+    
         function appendMessage(message, type) {
             const chatBox = document.getElementById('chat-box');
             const messageDiv = document.createElement('div');
@@ -86,36 +115,61 @@
             chatBox.appendChild(messageDiv);
             chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
         }
-
+    
+        function showTypingIndicator() {
+            const chatBox = document.getElementById('chat-box');
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'message ai-message';
+            typingIndicator.textContent = 'AI is typing...';
+            chatBox.appendChild(typingIndicator);
+            return typingIndicator;
+        }
+    
         async function handleUserInput() {
             const userInput = document.getElementById('user-input');
             const userText = userInput.value.trim();
+            const chatBox = document.getElementById('chat-box'); // Define chatBox here
             if (userText) {
                 appendMessage(userText, 'user');
                 userInput.value = '';
+                const typingIndicator = showTypingIndicator(); // Show typing indicator
                 try {
                     const response = await analyzeAndRespond(userText); // Correct function call
+                    chatBox.removeChild(typingIndicator); // Remove the typing indicator immediately
                     appendMessage(response, 'ai');
                 } catch (error) {
                     console.error('Error processing response:', error);
+                    chatBox.removeChild(typingIndicator); // Remove the typing indicator
                     appendMessage("Sorry, something went wrong.", 'ai');
                 }
             }
         }
-
+    
         function handleSend() {
             handleUserInput();
         }
-
+    
         function handleEnter(event) {
             if (event.key === 'Enter') {
                 event.preventDefault(); // Prevent default behavior of Enter key
                 handleUserInput();
             }
         }
-
+    
         document.getElementById('send-button').addEventListener('click', handleSend);
         document.getElementById('user-input').addEventListener('keydown', handleEnter); // Event listener for Enter key
+    
+        // Dark Mode Toggle
+        const toggleThemeButton = document.getElementById('toggle-theme');
+        let darkMode = false;
+    
+        toggleThemeButton.addEventListener('click', () => {
+            darkMode = !darkMode;
+            document.body.style.backgroundColor = darkMode ? '#343a40' : '#e9ecef';
+            document.body.style.color = darkMode ? '#ffffff' : '#000000';
+            document.getElementById('chat-container').style.backgroundColor = darkMode ? '#495057' : '#fff';
+            document.getElementById('chat-box').style.backgroundColor = darkMode ? '#6c757d' : '#f8f9fa';
+        });
     </script>
 </body>
 </html>
