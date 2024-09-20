@@ -1,4 +1,5 @@
-# AetherLexLib_JS
+# AetherLexLib_JS  <img src="https://github.com/Byson94/AetherLexLib_JS/blob/main/Logo.png?raw=true" alt="AetherLexLib Logo" width="30"/>
+
 A lightweight chatbot library. (NOTE: This library needs the user to be online, connected to a network, to provide results.)
 
 Check out the example at: [AetherLexLib AI Chatbot](https://byson94.github.io/AetherLexLib_JS/examples/)
