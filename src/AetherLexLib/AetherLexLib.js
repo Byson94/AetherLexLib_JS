@@ -55,12 +55,38 @@ const fuse = new Fuse(parsedLearningData, {
     shouldSort: true,
 });
 
+function extractKeywords(userInput) {
+    const stopWords = ["who", "what", "when", "where", "why", "is", "the", "a", "of", "on", "and", "for", "with", "to", "from", "by"];
+    const words = userInput.toLowerCase().split(/\s+/);
+    const keywords = [];
+
+    for (const word of words) {
+        if (!stopWords.includes(word)) {
+            // Split long words (e.g., "extraordinarily" could become "extra ordinary")
+            if (word.length > 8) { // You can adjust the length threshold as needed
+                keywords.push(...word.split(/(?=[A-Z])|(?<=\w)(?=\W)/)); // Split at capital letters or non-word boundaries
+            } else {
+                keywords.push(word);
+            }
+        }
+    }
+
+    return keywords.join(' ');
+}
+
 // Function to analyze and respond to user input
 export async function analyzeAndRespond(userInput) {
     const cleanedInput = normalizeText(userInput);
     updateContext(cleanedInput);
 
-    // Try to match with learning data first using fuzzy matching
+    // Check if the input is a mathematical calculation
+    if (isCalculation(cleanedInput)) {
+        const calculationResult = calculate(cleanedInput);
+        updateConversationData(cleanedInput, calculationResult);
+        return calculationResult;
+    }
+
+    // Step 1: Try to match with local learning data using fuzzy matching
     const learningResponse = findBestLearningMatch(cleanedInput);
     if (learningResponse) {
         const response = checkForRepetition(cleanedInput, learningResponse);
@@ -68,15 +94,66 @@ export async function analyzeAndRespond(userInput) {
         return response;
     }
 
-    // If not found in learning data, generate response from predefined categories
-    const response = generateDynamicResponse(cleanedInput);
-    updateConversationData(cleanedInput, response);
-    return response;
+    // Step 2: If no match is found, try to get knowledge from Wikidata
+    const wikidataResponse = await queryWikidata(cleanedInput);
+    if (wikidataResponse) {
+        updateConversationData(cleanedInput, wikidataResponse);
+        return wikidataResponse;
+    }
+
+    // Step 3: If nothing is found, return a default fallback response
+    const fallbackResponse = "Sorry, I couldn't find any information on that.";
+    updateConversationData(cleanedInput, fallbackResponse);
+    return fallbackResponse;
+}
+
+async function queryWikidata(query) {
+    const keywords = extractKeywords(query); // Extract relevant keywords
+    const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(keywords)}&format=json&language=en&limit=1&origin=*`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error("Failed to fetch from Wikidata");
+        }
+        const data = await response.json();
+
+        if (data.search && data.search.length > 0) {
+            const item = data.search[0];
+            const link = `https://www.wikidata.org/wiki/${item.id}`;
+            return `I found information about "<strong>${item.label}</strong>": ${item.description || 'No description available.'} <a href="${link}" target="_blank">More info</a>`;
+        }
+    } catch (error) {
+        console.error('Error fetching from Wikidata:', error);
+        return null;
+    }
+
+    return null;
+}
+
+function isCalculation(input) {
+    const calculationPattern = /(\bpi\b|[-+]?[0-9]*\.?[0-9]+)(\s*[-+*/]\s*(\bpi\b|[-+]?[0-9]*\.?[0-9]+))+/;
+    return calculationPattern.test(input);
+}
+
+// Function to extract and calculate the mathematical expression
+function calculate(expression) {
+    try {
+        const modifiedExpression = expression
+            .replace(/\bpi\b/g, 'Math.PI')
+            .replace(/(\b(sin|cos|tan|sqrt|abs)\b)/g, 'Math.$1');
+
+        const result = new Function(`return ${modifiedExpression}`)();
+        return `The result is: ${result}`;
+    } catch (error) {
+        return "Sorry, I couldn't calculate that.";
+    }
 }
 
 // Function to find the best match from learning data using fuzzy matching
 function findBestLearningMatch(input) {
-    const result = fuse.search(input);
+    const keywords = extractKeywords(input); // Extract relevant keywords from the input
+    const result = fuse.search(keywords); // Search using the keywords
     if (result.length > 0) {
         return result[0].item.aiResponse; // Return the closest matching response
     }
@@ -114,7 +191,6 @@ function generateDynamicResponse(userInput) {
         "Could you elaborate on that?"
     ];
 
-    // Select a random response from templates
     const randomResponse = responseTemplates[Math.floor(Math.random() * responseTemplates.length)];
     return randomResponse;
 }
@@ -124,21 +200,17 @@ function checkForRepetition(userInput, aiResponse) {
     const lastResponse = conversationData.history.length > 0 ? conversationData.history[conversationData.history.length - 1].aiResponse : null;
     const recentInputs = conversationData.history.map(entry => entry.userInput);
 
-    // Allow repeating the response if the current input relates to the last input
     const relatesToLastInput = recentInputs.length > 0 && isSimilar(recentInputs[recentInputs.length - 1], userInput);
 
-    // Check if the response is the same as the last one and doesn't relate
     if (aiResponse === lastResponse && !relatesToLastInput) {
         return generateDynamicResponse(userInput);
     }
 
-    // Otherwise, return the matched response or the aiResponse
     return aiResponse;
 }
 
 // Function to determine similarity between inputs
 function isSimilar(input1, input2) {
-    // This can be replaced with a more sophisticated method if needed
     return input1.includes(input2) || input2.includes(input1);
 }
 

@@ -112,7 +112,7 @@
             const chatBox = document.getElementById('chat-box');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}-message`;
-            messageDiv.textContent = message;
+            messageDiv.innerHTML = message; // Change to innerHTML for clickable links
             chatBox.appendChild(messageDiv);
             chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
         }
@@ -129,18 +129,18 @@
         async function handleUserInput() {
             const userInput = document.getElementById('user-input');
             const userText = userInput.value.trim();
-            const chatBox = document.getElementById('chat-box'); // Define chatBox here
+            const chatBox = document.getElementById('chat-box');
             if (userText) {
                 appendMessage(userText, 'user');
                 userInput.value = '';
-                const typingIndicator = showTypingIndicator(); // Show typing indicator
+                const typingIndicator = showTypingIndicator();
                 try {
-                    const response = await analyzeAndRespond(userText); // Correct function call
-                    chatBox.removeChild(typingIndicator); // Remove the typing indicator immediately
+                    const response = await analyzeAndRespond(userText);
+                    chatBox.removeChild(typingIndicator);
                     appendMessage(response, 'ai');
                 } catch (error) {
                     console.error('Error processing response:', error);
-                    chatBox.removeChild(typingIndicator); // Remove the typing indicator
+                    chatBox.removeChild(typingIndicator);
                     appendMessage("Sorry, something went wrong.", 'ai');
                 }
             }
@@ -152,13 +152,13 @@
     
         function handleEnter(event) {
             if (event.key === 'Enter') {
-                event.preventDefault(); // Prevent default behavior of Enter key
+                event.preventDefault();
                 handleUserInput();
             }
         }
     
         document.getElementById('send-button').addEventListener('click', handleSend);
-        document.getElementById('user-input').addEventListener('keydown', handleEnter); // Event listener for Enter key
+        document.getElementById('user-input').addEventListener('keydown', handleEnter);
     
         // Dark Mode Toggle
         const toggleThemeButton = document.getElementById('toggle-theme');
