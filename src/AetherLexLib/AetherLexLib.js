@@ -1,4 +1,11 @@
+/*
+ * This file uses the Fuse.js library.
+ * Fuse.js is licensed under the Apache License, Version 2.0.
+ * See: https://github.com/krisk/Fuse
+ */
+
 import { learningDataProvided } from './data.js';
+import Fuse from 'https://cdn.skypack.dev/fuse.js';
 
 // Basic conversation data with context management
 let conversationData = {
@@ -8,7 +15,7 @@ let conversationData = {
 
 // Predefined responses with flexible categories
 const responses = {
-    greetings: ["hello", "hi", "hey", "greetings", "heyyyy"],
+    greetings: ["hello", "hi", "hey", "greetings"],
     farewell: ["goodbye", "bye", "see you", "farewell"],
     affirmations: ["yes", "yep", "sure", "ok", "okay"],
     negations: ["no", "nope", "not really"],
@@ -39,147 +46,102 @@ function parseLearningData(data) {
 // Normalized learning data
 const parsedLearningData = parseLearningData(learningDataProvided);
 
+// Initialize Fuse for fuzzy matching
+const fuse = new Fuse(parsedLearningData, {
+    keys: ['userMessage'],
+    includeScore: true,
+    threshold: 0.4 // Adjust threshold for sensitivity
+});
+
 // Function to analyze and respond to user input
 export async function analyzeAndRespond(userInput) {
     const cleanedInput = normalizeText(userInput);
     updateContext(cleanedInput);
 
-    // Try to match with learning data first, prioritizing exact matches
+    // Try to match with learning data first using fuzzy matching
     const learningResponse = findBestLearningMatch(cleanedInput);
     if (learningResponse) {
-        updateConversationData(userInput, learningResponse);
-        return learningResponse;
+        const response = checkForRepetition(cleanedInput, learningResponse);
+        updateConversationData(cleanedInput, response);
+        return response;
     }
 
     // If not found in learning data, generate response from predefined categories
-    const response = generateResponse(cleanedInput);
-    updateConversationData(userInput, response);
+    const response = generateDynamicResponse(cleanedInput);
+    updateConversationData(cleanedInput, response);
     return response;
 }
 
-// Function to find the best match from learning data
+// Function to find the best match from learning data using fuzzy matching
 function findBestLearningMatch(input) {
-    let bestMatch = null;
-    let bestScore = -Infinity;
-
-    for (const data of parsedLearningData) {
-        const userMessage = normalizeText(data.userMessage);
-
-        // Exact match gives the highest score
-        if (userMessage === input) {
-            return data.aiResponse;  // Return immediately on exact match
-        }
-
-        // Check for close match using Levenshtein distance
-        const similarityScore = getMatchScore(input, userMessage);
-        if (similarityScore > bestScore) {
-            bestScore = similarityScore;
-            bestMatch = data.aiResponse;
-        }
+    const result = fuse.search(input);
+    if (result.length > 0) {
+        return result[0].item.aiResponse; // Return the closest matching response
     }
-
-    return bestMatch;  // Return the closest matching response
-}
-
-// Function to calculate a match score based on multiple factors
-function getMatchScore(input, reference) {
-    const levDistance = levenshteinDistance(input, reference);
-    const maxLen = Math.max(input.length, reference.length);
-
-    // Score based on Levenshtein distance and string length
-    const score = (maxLen - levDistance) / maxLen;  // Normalize score between 0 and 1
-    return score;
+    return null; // No match found
 }
 
 // Function to normalize and preprocess text
 function normalizeText(text) {
-    return text.toLowerCase().replace(/[.,!?]/g, '').replace(/\s+/g, ' ').trim();
-}
-
-// Function to generate a response based on user input (fallback)
-function generateResponse(userInput) {
-    const keywordResponses = {
-        greetings: [
-            "Hi there! How can I help you today?",
-            "Hello! What can I do for you?",
-            "Hey! Need assistance with something?"
-        ],
-        farewell: [
-            "Goodbye! Have a great day!",
-            "See you later! Take care!",
-            "Farewell! Until next time!"
-        ],
-        affirmations: [
-            "Got it! How can I assist you further?",
-            "Understood! What do you need help with?",
-            "Okay! What's your next question?"
-        ],
-        negations: [
-            "No problem. Let me know if you need help!",
-            "That's fine! Feel free to ask if something comes up.",
-            "Alright! Just ask if you have any questions later."
-        ],
-        gratitude: [
-            "You're welcome!",
-            "Anytime! Happy to help!",
-            "No worries! Glad to assist!"
-        ],
-        help: [
-            "I can assist you with various tasks. What do you need help with?",
-            "How may I assist you today?",
-            "I'm here to help! What do you need?"
-        ],
-        confusion: [
-            "I'm not sure I understand. Can you please clarify?",
-            "Could you explain that a bit more?",
-            "I didn't catch that. Can you rephrase?"
-        ],
+    const commonTypos = {
+        "yu": "you",
+        "u": "you",
+        "r": "are",
+        "wat": "what"
     };
 
-    for (const [category, responsesArray] of Object.entries(keywordResponses)) {
-        const response = findBestMatch(userInput, responsesArray);
-        if (response) {
-            return response;
-        }
+    let normalized = text.toLowerCase().replace(/[.,!?]/g, '').replace(/\s+/g, ' ').trim();
+    
+    // Replace common typos
+    for (const [typo, correct] of Object.entries(commonTypos)) {
+        normalized = normalized.replace(new RegExp(`\\b${typo}\\b`, 'g'), correct);
     }
 
-    return handleError(userInput);
+    return normalized;
 }
 
-// Function to handle errors or misunderstandings
-function handleError(userInput) {
-    return `I'm sorry, but I didn't quite get that. Could you please clarify or ask differently?`;
+// Function to generate a dynamic response based on user input
+function generateDynamicResponse(userInput) {
+    const responseTemplates = [
+        "That's interesting! Can you tell me more about that?",
+        "I'm not sure I follow. Could you clarify your thoughts?",
+        "Sounds good! What else do you want to discuss?",
+        "I see! How can I assist you further?",
+        "That makes sense. What's your next question?",
+        "I'm here to help! What do you need assistance with?",
+        "Could you elaborate on that?"
+    ];
+
+    // Select a random response from templates
+    const randomResponse = responseTemplates[Math.floor(Math.random() * responseTemplates.length)];
+    return randomResponse;
 }
 
-// Function to find the best match from a list of phrases with a threshold
-function findBestMatch(input, possibleResponses, threshold = 3) {
-    let bestMatch = null;
-    let smallestDistance = Infinity;
+// Function to check for repetition and respond accordingly
+function checkForRepetition(userInput, aiResponse) {
+    const lastResponse = conversationData.history.length > 0 ? conversationData.history[conversationData.history.length - 1].aiResponse : null;
+    const recentInputs = conversationData.history.map(entry => entry.userInput);
 
-    for (const phrase of possibleResponses) {
-        const distance = levenshteinDistance(input, phrase);
-        if (distance < smallestDistance) {
-            smallestDistance = distance;
-            bestMatch = phrase;
-        }
+    // Check if the response is the same as the last one
+    if (aiResponse === lastResponse) {
+        return generateDynamicResponse(userInput);
     }
 
-    return smallestDistance <= threshold ? bestMatch : null;
-}
-
-// Function to calculate Levenshtein distance between two strings
-function levenshteinDistance(a, b) {
-    const matrix = Array.from({ length: b.length + 1 }, (_, i) => Array.from({ length: a.length + 1 }, (_, j) => i === 0 ? j : 0));
-
-    for (let i = 1; i <= b.length; i++) {
-        for (let j = 1; j <= a.length; j++) {
-            matrix[i][j] = b[i - 1] === a[j - 1]
-                ? matrix[i - 1][j - 1]
-                : Math.min(matrix[i - 1][j - 1] + 1, Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1));
+    // Check for similar previous inputs (simple string match for demonstration)
+    for (const input of recentInputs) {
+        if (input === userInput || isSimilar(input, userInput)) {
+            // Return the last unique response for the same input
+            return conversationData.history.find(entry => entry.userInput === input).aiResponse || aiResponse;
         }
     }
+    
+    return aiResponse;
+}
 
-    return matrix[b.length][a.length];
+// Function to determine similarity between inputs
+function isSimilar(input1, input2) {
+    // This can be replaced with a more sophisticated method if needed
+    return input1.includes(input2) || input2.includes(input1);
 }
 
 // Function to update conversation data
