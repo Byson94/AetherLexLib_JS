@@ -858,9 +858,7 @@ Nice to meet you.
 The pleasure is mine. How can I assist you further?
 Nice to meet you too.
 I'm glad we could connect.
-`;
 
-export const extendedLearningData = `
 What are you?
 I am a conversational artificial intelligence designed to assist with tasks and provide information.
 
