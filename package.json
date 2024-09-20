@@ -1,8 +1,8 @@
 {
   "name": "aetherlexlib_js",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "An AI library",
-  "main": "src/AetherLexLib.js",
+  "main": "src/AetherLexLib/AetherLexLib.js",
   "directories": {
     "example": "examples"
   },
