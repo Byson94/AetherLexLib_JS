@@ -1,22 +1,20 @@
 import { learningDataProvided } from './data.js';
 
-// Basic in-memory conversation data
+// Basic conversation data with context management
 let conversationData = {
-    history: []
+    history: [],
+    context: {}
 };
 
-// Predefined responses with more flexible categories
+// Predefined responses with flexible categories
 const responses = {
-    greetings: ["hello", "hi", "hey", "greetings"],
+    greetings: ["hello", "hi", "hey", "greetings", "heyyyy"],
     farewell: ["goodbye", "bye", "see you", "farewell"],
     affirmations: ["yes", "yep", "sure", "ok", "okay"],
     negations: ["no", "nope", "not really"],
     gratitude: ["thanks", "thank you", "thx"],
     help: ["help", "assist", "support", "how can I help"],
     confusion: ["huh", "what", "i don't understand"],
-    learning: ["what have you learned", "what do you know now", "what's interesting", "did you learn"],
-    improvement: ["what would you change", "how would you improve", "could you be better"],
-    errors: ["how do you handle mistakes", "what happens when you're wrong", "error handling", "do you make mistakes"]
 };
 
 // Function to parse and index learning data
@@ -44,6 +42,7 @@ const parsedLearningData = parseLearningData(learningDataProvided);
 // Function to analyze and respond to user input
 export async function analyzeAndRespond(userInput) {
     const cleanedInput = normalizeText(userInput);
+    updateContext(cleanedInput);
 
     // Try to match with learning data
     const learningResponse = findResponseInLearningData(cleanedInput);
@@ -60,35 +59,64 @@ export async function analyzeAndRespond(userInput) {
 
 // Function to find response in learning data with improved matching
 function findResponseInLearningData(input) {
-    const normalizedInput = normalizeText(input);
-
     for (const data of parsedLearningData) {
-        const normalizedData = normalizeText(data.userMessage);
-        const distance = levenshteinDistance(normalizedInput, normalizedData);
-
-        // Basic similarity check
-        if (distance <= 5) { // Adjust threshold as needed
-            return data.aiResponse;
-        }
-
-        // Advanced similarity check
-        if (isSemanticallySimilar(normalizedInput, normalizedData)) {
+        if (isSemanticallySimilar(normalizeText(input), normalizeText(data.userMessage))) {
             return data.aiResponse;
         }
     }
-
     return null;
 }
 
 // Function to check semantic similarity
 function isSemanticallySimilar(input1, input2) {
-    // Basic semantic check based on inclusion
-    return input1.includes(input2) || input2.includes(input1);
+    return input1 === input2 || input1.includes(input2) || input2.includes(input1);
 }
 
 // Function to normalize and preprocess text
 function normalizeText(text) {
     return text.toLowerCase().replace(/[.,!?]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+// Function to generate a response based on user input
+function generateResponse(userInput) {
+    const keywordResponses = {
+        greetings: "Hi there! How can I help you today?",
+        farewell: "Goodbye! Have a great day!",
+        affirmations: "Got it! How can I assist you further?",
+        negations: "No problem. Let me know if you need help!",
+        gratitude: "You're welcome!",
+        help: "I can assist you with various tasks. What do you need help with?",
+        confusion: "I'm not sure I understand. Can you please clarify?",
+    };
+
+    for (const [category, response] of Object.entries(keywordResponses)) {
+        if (findBestMatch(userInput, responses[category])) {
+            return response;
+        }
+    }
+
+    return handleError(userInput);
+}
+
+// Function to handle errors or misunderstandings
+function handleError(userInput) {
+    return `I'm sorry, but I didn't quite get that. Could you please clarify or ask differently?`;
+}
+
+// Function to find the best match from a list of phrases with a threshold
+function findBestMatch(input, possibleResponses, threshold = 3) {
+    let bestMatch = null;
+    let smallestDistance = Infinity;
+
+    for (const phrase of possibleResponses) {
+        const distance = levenshteinDistance(input, phrase);
+        if (distance < smallestDistance) {
+            smallestDistance = distance;
+            bestMatch = phrase;
+        }
+    }
+
+    return smallestDistance <= threshold ? bestMatch : null;
 }
 
 // Function to calculate Levenshtein distance between two strings
@@ -106,48 +134,16 @@ function levenshteinDistance(a, b) {
     return matrix[b.length][a.length];
 }
 
-// Function to generate a response based on user input
-function generateResponse(userInput) {
-const keywordResponses = {
-    greetings: "Hi there! How can I help you today?",
-    farewell: "Goodbye! Have a great day!",
-    affirmations: "Got it! How can I assist you further?",
-    negations: "No problem. Let me know if you need help!",
-    gratitude: "You're welcome!",
-    help: "I can assist you with various tasks. What do you need help with?",
-    confusion: "I'm not sure I understand. Can you please clarify?",
-    learning: "I learn from our conversations and try to improve with each interaction. What else would you like to teach me?",
-    improvement: "If I could change something, I'd aim to be more context-aware and adaptive in conversations.",
-    errors: "When I make mistakes, I rely on users like you to guide me by clarifying your questions. I’m always learning from my errors."
-};
-
-    for (const [category, response] of Object.entries(keywordResponses)) {
-        const bestMatch = findBestMatch(userInput, responses[category]);
-        if (bestMatch) {
-            return response;
-        }
-    }
-
-    return "Sorry, I don't understand that. Could you please rephrase?";
-}
-
-// Function to find the best match from a list of phrases with a threshold
-function findBestMatch(input, possibleResponses, threshold = 5) { // Adjusted threshold
-    let bestMatch = null;
-    let smallestDistance = Infinity;
-
-    for (const phrase of possibleResponses) {
-        const distance = levenshteinDistance(input, phrase);
-        if (distance < smallestDistance) {
-            smallestDistance = distance;
-            bestMatch = phrase;
-        }
-    }
-
-    return smallestDistance <= threshold ? bestMatch : null;
-}
-
 // Function to update conversation data
 function updateConversationData(userInput, aiResponse) {
     conversationData.history.push({ userInput, aiResponse });
+}
+
+// Function to update context based on the conversation
+function updateContext(userInput) {
+    // Implement logic to maintain context
+    if (responses.greetings.some(greet => userInput.includes(greet))) {
+        conversationData.context.lastGreeting = userInput;
+    }
+    // Add more context management as needed
 }
