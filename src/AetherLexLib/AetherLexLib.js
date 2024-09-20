@@ -46,11 +46,13 @@ function parseLearningData(data) {
 // Normalized learning data
 const parsedLearningData = parseLearningData(learningDataProvided);
 
-// Initialize Fuse for fuzzy matching
+// Initialize Fuse for fuzzy matching with higher threshold and more search results
 const fuse = new Fuse(parsedLearningData, {
     keys: ['userMessage'],
     includeScore: true,
-    threshold: 0.4 // Adjust threshold for sensitivity
+    threshold: 0.3, // Adjusted threshold for better matches
+    minMatchCharLength: 2, // Ensure longer matches
+    shouldSort: true,
 });
 
 // Function to analyze and respond to user input
@@ -122,19 +124,15 @@ function checkForRepetition(userInput, aiResponse) {
     const lastResponse = conversationData.history.length > 0 ? conversationData.history[conversationData.history.length - 1].aiResponse : null;
     const recentInputs = conversationData.history.map(entry => entry.userInput);
 
-    // Check if the response is the same as the last one
-    if (aiResponse === lastResponse) {
+    // Allow repeating the response if the current input relates to the last input
+    const relatesToLastInput = recentInputs.length > 0 && isSimilar(recentInputs[recentInputs.length - 1], userInput);
+
+    // Check if the response is the same as the last one and doesn't relate
+    if (aiResponse === lastResponse && !relatesToLastInput) {
         return generateDynamicResponse(userInput);
     }
 
-    // Check for similar previous inputs (simple string match for demonstration)
-    for (const input of recentInputs) {
-        if (input === userInput || isSimilar(input, userInput)) {
-            // Return the last unique response for the same input
-            return conversationData.history.find(entry => entry.userInput === input).aiResponse || aiResponse;
-        }
-    }
-    
+    // Otherwise, return the matched response or the aiResponse
     return aiResponse;
 }
 
