@@ -45,13 +45,6 @@ const parsedLearningData = parseLearningData(learningDataProvided);
 export async function analyzeAndRespond(userInput) {
     const cleanedInput = normalizeText(userInput);
 
-    // Break input into words and analyze
-    const wordResponse = analyzeWords(cleanedInput);
-    if (wordResponse) {
-        updateConversationData(userInput, wordResponse);
-        return wordResponse;
-    }
-
     // Try to match with learning data
     const learningResponse = findResponseInLearningData(cleanedInput);
     if (learningResponse) {
@@ -63,46 +56,6 @@ export async function analyzeAndRespond(userInput) {
     const response = generateResponse(cleanedInput);
     updateConversationData(userInput, response);
     return response;
-}
-
-// Function to analyze words in the input and find suitable responses
-function analyzeWords(input) {
-    const words = input.split(/\s+/);
-    let bestResponse = null;
-    let highestMatchScore = 0;
-
-    words.forEach(word => {
-        for (const [category, possibleResponses] of Object.entries(responses)) {
-            const bestMatch = findBestMatch(word, possibleResponses);
-            if (bestMatch) {
-                const matchScore = 1; // You can customize this scoring logic
-                if (matchScore > highestMatchScore) {
-                    highestMatchScore = matchScore;
-                    bestResponse = generateResponseForCategory(category);
-                }
-            }
-        }
-    });
-
-    return bestResponse;
-}
-
-// Function to generate response based on category
-function generateResponseForCategory(category) {
-    const keywordResponses = {
-        greetings: "Hi there! How can I help you today?",
-        farewell: "Goodbye! Have a great day!",
-        affirmations: "Got it! How can I assist you further?",
-        negations: "No problem. Let me know if you need help!",
-        gratitude: "You're welcome!",
-        help: "I can assist you with various tasks. What do you need help with?",
-        confusion: "I'm not sure I understand. Can you please clarify?",
-        learning: "I learn from our conversations and try to improve with each interaction. What else would you like to teach me?",
-        improvement: "If I could change something, I'd aim to be more context-aware and adaptive in conversations.",
-        errors: "When I make mistakes, I rely on users like you to guide me by clarifying your questions. I’m always learning from my errors."
-    };
-
-    return keywordResponses[category] || "Sorry, I don't understand that.";
 }
 
 // Function to find response in learning data with improved matching
@@ -155,18 +108,18 @@ function levenshteinDistance(a, b) {
 
 // Function to generate a response based on user input
 function generateResponse(userInput) {
-    const keywordResponses = {
-        greetings: "Hi there! How can I help you today?",
-        farewell: "Goodbye! Have a great day!",
-        affirmations: "Got it! How can I assist you further?",
-        negations: "No problem. Let me know if you need help!",
-        gratitude: "You're welcome!",
-        help: "I can assist you with various tasks. What do you need help with?",
-        confusion: "I'm not sure I understand. Can you please clarify?",
-        learning: "I learn from our conversations and try to improve with each interaction. What else would you like to teach me?",
-        improvement: "If I could change something, I'd aim to be more context-aware and adaptive in conversations.",
-        errors: "When I make mistakes, I rely on users like you to guide me by clarifying your questions. I’m always learning from my errors."
-    };
+const keywordResponses = {
+    greetings: "Hi there! How can I help you today?",
+    farewell: "Goodbye! Have a great day!",
+    affirmations: "Got it! How can I assist you further?",
+    negations: "No problem. Let me know if you need help!",
+    gratitude: "You're welcome!",
+    help: "I can assist you with various tasks. What do you need help with?",
+    confusion: "I'm not sure I understand. Can you please clarify?",
+    learning: "I learn from our conversations and try to improve with each interaction. What else would you like to teach me?",
+    improvement: "If I could change something, I'd aim to be more context-aware and adaptive in conversations.",
+    errors: "When I make mistakes, I rely on users like you to guide me by clarifying your questions. I’m always learning from my errors."
+};
 
     for (const [category, response] of Object.entries(keywordResponses)) {
         const bestMatch = findBestMatch(userInput, responses[category]);
@@ -197,13 +150,4 @@ function findBestMatch(input, possibleResponses, threshold = 5) { // Adjusted th
 // Function to update conversation data
 function updateConversationData(userInput, aiResponse) {
     conversationData.history.push({ userInput, aiResponse });
-}
-
-// Update the learning data to include broken parts
-function updateLearningData(userInput) {
-    const words = userInput.split(/\s+/);
-    words.forEach(word => {
-        // Add logic here to learn from the broken parts, e.g., storing in a data structure
-        // Example: if (!learningData.includes(word)) { learningData.push(word); }
-    });
 }
