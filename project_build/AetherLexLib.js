@@ -44,8 +44,8 @@ export async function analyzeAndRespond(userInput) {
     const cleanedInput = normalizeText(userInput);
     updateContext(cleanedInput);
 
-    // Try to match with learning data
-    const learningResponse = findResponseInLearningData(cleanedInput);
+    // Try to match with learning data first, prioritizing exact matches
+    const learningResponse = findBestLearningMatch(cleanedInput);
     if (learningResponse) {
         updateConversationData(userInput, learningResponse);
         return learningResponse;
@@ -57,19 +57,38 @@ export async function analyzeAndRespond(userInput) {
     return response;
 }
 
-// Function to find response in learning data with improved matching
-function findResponseInLearningData(input) {
+// Function to find the best match from learning data
+function findBestLearningMatch(input) {
+    let bestMatch = null;
+    let bestScore = -Infinity;
+
     for (const data of parsedLearningData) {
-        if (isSemanticallySimilar(normalizeText(input), normalizeText(data.userMessage))) {
-            return data.aiResponse;
+        const userMessage = normalizeText(data.userMessage);
+
+        // Exact match gives the highest score
+        if (userMessage === input) {
+            return data.aiResponse;  // Return immediately on exact match
+        }
+
+        // Check for close match using Levenshtein distance
+        const similarityScore = getMatchScore(input, userMessage);
+        if (similarityScore > bestScore) {
+            bestScore = similarityScore;
+            bestMatch = data.aiResponse;
         }
     }
-    return null;
+
+    return bestMatch;  // Return the closest matching response
 }
 
-// Function to check semantic similarity
-function isSemanticallySimilar(input1, input2) {
-    return input1 === input2 || input1.includes(input2) || input2.includes(input1);
+// Function to calculate a match score based on multiple factors
+function getMatchScore(input, reference) {
+    const levDistance = levenshteinDistance(input, reference);
+    const maxLen = Math.max(input.length, reference.length);
+
+    // Score based on Levenshtein distance and string length
+    const score = (maxLen - levDistance) / maxLen;  // Normalize score between 0 and 1
+    return score;
 }
 
 // Function to normalize and preprocess text
@@ -77,7 +96,7 @@ function normalizeText(text) {
     return text.toLowerCase().replace(/[.,!?]/g, '').replace(/\s+/g, ' ').trim();
 }
 
-// Function to generate a response based on user input
+// Function to generate a response based on user input (fallback)
 function generateResponse(userInput) {
     const keywordResponses = {
         greetings: [
@@ -118,7 +137,7 @@ function generateResponse(userInput) {
     };
 
     for (const [category, responsesArray] of Object.entries(keywordResponses)) {
-        const response = findBestMatch(userInput, responses[category]);
+        const response = findBestMatch(userInput, responsesArray);
         if (response) {
             return response;
         }
@@ -170,9 +189,7 @@ function updateConversationData(userInput, aiResponse) {
 
 // Function to update context based on the conversation
 function updateContext(userInput) {
-    // Implement logic to maintain context
     if (responses.greetings.some(greet => userInput.includes(greet))) {
         conversationData.context.lastGreeting = userInput;
     }
-    // Add more context management as needed
 }
