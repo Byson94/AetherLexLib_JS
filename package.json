@@ -1,0 +1,25 @@
+{
+  "name": "aetherlexlib_js",
+  "version": "0.1.0",
+  "description": "An AI library",
+  "main": "src/AetherLexLib.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Byson94/AetherLexLib_JS.git"
+  },
+  "keywords": [
+    "ai-library"
+  ],
+  "author": "Byson94",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Byson94/AetherLexLib_JS/issues"
+  },
+  "homepage": "https://github.com/Byson94/AetherLexLib_JS#readme"
+}
