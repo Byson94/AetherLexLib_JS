@@ -1,19 +1,12 @@
-/*
- * This file uses the Fuse.js library.
- * Fuse.js is licensed under the Apache License, Version 2.0.
- * See: https://github.com/krisk/Fuse
- */
-
 import { learningDataProvided } from './data.js';
+import { stemmingData } from './data.setmming.js';
 import Fuse from 'https://cdn.skypack.dev/fuse.js';
 
-// Basic conversation data with context management
 let conversationData = {
     history: [],
     context: {}
 };
 
-// Predefined responses with flexible categories
 const responses = {
     greetings: ["hello", "hi", "hey", "greetings"],
     farewell: ["goodbye", "bye", "see you", "farewell"],
@@ -24,7 +17,6 @@ const responses = {
     confusion: ["huh", "what", "i don't understand"],
 };
 
-// Function to parse and index learning data
 function parseLearningData(data) {
     const conversations = data.trim().split('\n\n').filter(Boolean);
     const parsedData = [];
@@ -43,35 +35,36 @@ function parseLearningData(data) {
     return parsedData;
 }
 
-// Normalized learning data
 const parsedLearningData = parseLearningData(learningDataProvided);
 
-// Initialize Fuse for fuzzy matching with higher threshold and more search results
 const fuse = new Fuse(parsedLearningData, {
     keys: ['userMessage'],
     includeScore: true,
-    threshold: 0.3, // Adjusted threshold for better matches
-    minMatchCharLength: 2, // Ensure longer matches
+    threshold: 0.3,
+    minMatchCharLength: 2,
     shouldSort: true,
 });
 
-function extractKeywords(userInput) {
-    const stopWords = ["who", "what", "when", "where", "why", "is", "the", "a", "of", "on", "and", "for", "with", "to", "from", "by"];
-    const words = userInput.toLowerCase().split(/\s+/);
-    const keywords = [];
-
-    for (const word of words) {
-        if (!stopWords.includes(word)) {
-            // Split long words (e.g., "extraordinarily" could become "extra ordinary")
-            if (word.length > 8) { // You can adjust the length threshold as needed
-                keywords.push(...word.split(/(?=[A-Z])|(?<=\w)(?=\W)/)); // Split at capital letters or non-word boundaries
-            } else {
-                keywords.push(word);
-            }
+// Function to stem words based on the stemming data
+function stemWord(word) {
+    for (const [root, inflections] of Object.entries(stemmingData)) {
+        if (inflections.includes(word)) {
+            return root; // Return the root form if found
         }
     }
+    return word; // Return the word itself if no stemming is found
+}
 
-    return keywords.join(' ');
+// Function to segment text into sentences
+function segmentSentences(text) {
+    return text.split(/(?<=[.!?])\s+/); // Split by sentence-ending punctuation followed by whitespace
+}
+
+// Function to tokenize text into words
+function tokenize(text) {
+    const stopWords = new Set(["who", "what", "when", "where", "why", "is", "the", "a", "of", "on", "and", "for", "with", "to", "from", "by"]);
+    const words = text.toLowerCase().match(/\w+/g) || []; // Extract words
+    return words.filter(word => !stopWords.has(word)); // Remove stop words
 }
 
 // Function to analyze and respond to user input
@@ -101,14 +94,15 @@ export async function analyzeAndRespond(userInput) {
         return wikidataResponse;
     }
 
-    // Step 3: If nothing is found, return a default fallback response
-    const fallbackResponse = "Sorry, I couldn't find any information on that.";
+    // Step 3: If no match is found, return a default fallback response
+    const fallbackResponse = "Sorry, I couldn't find any information on that. Try asking me something different.";
     updateConversationData(cleanedInput, fallbackResponse);
     return fallbackResponse;
 }
 
+// Function to query Wikidata
 async function queryWikidata(query) {
-    const keywords = extractKeywords(query); // Extract relevant keywords
+    const keywords = tokenize(query).join(' '); // Use tokenized keywords
     const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(keywords)}&format=json&language=en&limit=1&origin=*`;
 
     try {
@@ -136,7 +130,6 @@ function isCalculation(input) {
     return calculationPattern.test(input);
 }
 
-// Function to extract and calculate the mathematical expression
 function calculate(expression) {
     try {
         const modifiedExpression = expression
@@ -150,17 +143,16 @@ function calculate(expression) {
     }
 }
 
-// Function to find the best match from learning data using fuzzy matching
 function findBestLearningMatch(input) {
-    const keywords = extractKeywords(input); // Extract relevant keywords from the input
-    const result = fuse.search(keywords); // Search using the keywords
+    const keywords = tokenize(input); // Tokenize the input
+    const stemmedKeywords = keywords.map(stemWord); // Stem the tokenized keywords
+    const result = fuse.search(stemmedKeywords.join(' ')); // Search using the stemmed keywords
     if (result.length > 0) {
         return result[0].item.aiResponse; // Return the closest matching response
     }
     return null; // No match found
 }
 
-// Function to normalize and preprocess text
 function normalizeText(text) {
     const commonTypos = {
         "yu": "you",
@@ -176,10 +168,11 @@ function normalizeText(text) {
         normalized = normalized.replace(new RegExp(`\\b${typo}\\b`, 'g'), correct);
     }
 
-    return normalized;
+    // Stem words
+    const words = normalized.split(' ').map(stemWord);
+    return words.join(' ');
 }
 
-// Function to generate a dynamic response based on user input
 function generateDynamicResponse(userInput) {
     const responseTemplates = [
         "That's interesting! Can you tell me more about that?",
@@ -195,33 +188,29 @@ function generateDynamicResponse(userInput) {
     return randomResponse;
 }
 
-// Function to check for repetition and respond accordingly
 function checkForRepetition(userInput, aiResponse) {
     const lastResponse = conversationData.history.length > 0 ? conversationData.history[conversationData.history.length - 1].aiResponse : null;
     const recentInputs = conversationData.history.map(entry => entry.userInput);
 
-    const relatesToLastInput = recentInputs.length > 0 && isSimilar(recentInputs[recentInputs.length - 1], userInput);
-
-    if (aiResponse === lastResponse && !relatesToLastInput) {
+    if (recentInputs.includes(userInput) && aiResponse === lastResponse) {
         return generateDynamicResponse(userInput);
     }
 
     return aiResponse;
 }
 
-// Function to determine similarity between inputs
-function isSimilar(input1, input2) {
-    return input1.includes(input2) || input2.includes(input1);
+function updateContext(input) {
+    if (input.includes('name')) {
+        conversationData.context.name = true;
+    } else if (input.includes('age')) {
+        conversationData.context.age = true;
+    }
 }
 
-// Function to update conversation data
 function updateConversationData(userInput, aiResponse) {
     conversationData.history.push({ userInput, aiResponse });
 }
 
-// Function to update context based on the conversation
-function updateContext(userInput) {
-    if (responses.greetings.some(greet => userInput.includes(greet))) {
-        conversationData.context.lastGreeting = userInput;
-    }
-}
+export default {
+    analyzeAndRespond
+};
