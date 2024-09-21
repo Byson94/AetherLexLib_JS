@@ -1,7 +1,15 @@
+/*
+ * This file uses the Fuse.js library for better response matching and WikiData for knowledge retrieval.
+ * Fuse.js is licensed under the Apache License, Version 2.0 and WikiData under CC0.
+ * See: https://github.com/krisk/Fuse
+ * See: https://www.wikidata.org/
+ */
+
 import { learningDataProvided } from './data.js';
 import { stemmingData } from './data.stemming.js';
 import { lemmatizationData } from './data.lemmatization.js';
 import { posDictionary } from './data.tags.js';
+import { responses } from './responces.js';
 import Fuse from 'https://cdn.skypack.dev/fuse.js';
 import nlp from 'https://cdn.skypack.dev/compromise';
 
@@ -10,17 +18,7 @@ let conversationData = {
     context: {}
 };
 
-const responses = {
-    greetings: ["hello", "hi", "hey", "greetings"],
-    farewell: ["goodbye", "bye", "see you", "farewell"],
-    affirmations: ["yes", "yep", "sure", "ok", "okay"],
-    negations: ["no", "nope", "not really"],
-    gratitude: ["thanks", "thank you", "thx"],
-    help: ["help", "assist", "support", "how can I help"],
-    confusion: ["huh", "what", "i don't understand"],
-};
-
-// Parse learning data
+// Parse learning data into structured format
 function parseLearningData(data) {
     const conversations = data.trim().split('\n\n').filter(Boolean);
     const parsedData = [];
@@ -41,6 +39,7 @@ function parseLearningData(data) {
 
 const parsedLearningData = parseLearningData(learningDataProvided);
 
+// Initialize Fuse.js for fuzzy matching
 const fuse = new Fuse(parsedLearningData, {
     keys: ['userMessage'],
     includeScore: true,
@@ -49,26 +48,24 @@ const fuse = new Fuse(parsedLearningData, {
     shouldSort: true,
 });
 
-// Function to tokenize text into words
+// Utility functions for text processing
 function tokenize(text) {
     const stopWords = new Set(["who", "what", "when", "where", "why", "is", "the", "a", "of", "on", "and", "for", "with", "to", "from", "by"]);
-    const words = text.toLowerCase().match(/\w+/g) || []; // Extract words
-    return words.filter(word => !stopWords.has(word)); // Remove stop words
+    const words = text.toLowerCase().match(/\w+/g) || []; 
+    return words.filter(word => !stopWords.has(word)); 
 }
 
-// Function to stem words based on the stemming data
 function stemWord(word) {
     for (const [root, inflections] of Object.entries(stemmingData)) {
         if (inflections.includes(word)) {
-            return root; // Return the root form if found
+            return root; 
         }
     }
-    return word; // Return the word itself if no stemming is found
+    return word; 
 }
 
-// Function to lemmatize words based on the lemmatization data
 function lemmatizeWord(word) {
-    return lemmatizationData[word] || word; // Return the lemma if found, otherwise the word itself
+    return lemmatizationData[word] || word; 
 }
 
 function normalizeText(text) {
@@ -79,10 +76,8 @@ function normalizeText(text) {
         "wat": "what"
     };
     
-    // Normalize punctuation and trim spaces
     let normalized = text.toLowerCase().replace(/[.,!?]+/g, ' ').replace(/\s+/g, ' ').trim();
     
-    // Replace common typos
     for (const [typo, correct] of Object.entries(commonTypos)) {
         normalized = normalized.replace(new RegExp(`\\b${typo}\\b`, 'g'), correct);
     }
@@ -91,11 +86,9 @@ function normalizeText(text) {
 }
 
 function segmentSentences(text) {
-    // Improved to account for common sentence structures and punctuation
     return text.split(/(?<=[.!?])\s+|(?<=\b(and|but|or|so)\b)\s+/i).filter(Boolean);
 }
 
-// Function for part of speech tagging
 function tagPartOfSpeech(words) {
     return words.map(word => {
         const tag = posDictionary[word] || 'Unknown';
@@ -103,7 +96,6 @@ function tagPartOfSpeech(words) {
     });
 }
 
-// Function for named entity tagging
 function tagNamedEntities(input) {
     const doc = nlp(input);
     const entities = doc.people().out('array').map(person => ({ word: person, tag: 'Person' }))
@@ -113,51 +105,63 @@ function tagNamedEntities(input) {
     return entities;
 }
 
+// Main function to analyze user input and generate response
 async function analyzeAndRespond(userInput) {
-    const segmentedInput = segmentSentences(userInput); // Split input into segments
+    const segmentedInput = segmentSentences(userInput); 
     const responses = [];
 
     for (const segment of segmentedInput) {
         const cleanedInput = normalizeText(segment);
-        const response = await generateResponse(cleanedInput);
+        
+        // Update context based on user input
+        checkContext(cleanedInput);
+        
+        // NLP processing
+        const tokens = tokenize(cleanedInput);
+        const stemmedTokens = tokens.map(stemWord);
+        const lemmatizedTokens = stemmedTokens.map(lemmatizeWord);
+        const posTags = tagPartOfSpeech(lemmatizedTokens);
+        const namedEntities = tagNamedEntities(cleanedInput);
+
+        const response = await generateResponse(cleanedInput, posTags, namedEntities);
         responses.push(response);
     }
 
     return responses.join(' ');
 }
 
-async function generateResponse(cleanedInput) {
-    // Check if the input is a mathematical calculation
+// Generate appropriate response based on input analysis
+async function generateResponse(cleanedInput, posTags, namedEntities) {
+    // Check for mathematical calculations
     if (isCalculation(cleanedInput)) {
         return calculate(cleanedInput);
     }
 
-    // Try to match with local learning data using fuzzy matching
+    // Attempt to find a match in learning data
     const learningResponse = findBestLearningMatch(cleanedInput);
     if (learningResponse) {
         return learningResponse;
     }
 
-    // Try to get knowledge from Wikidata
+    // Query Wikidata and DuckDuckGo only if it's a question
     const wikidataResponse = await queryWikidata(cleanedInput);
     if (wikidataResponse) {
         return wikidataResponse;
     }
 
-    // If Wikidata doesn't have an answer, query DuckDuckGo as a backup
     const ddgResponse = await queryDuckDuckGo(cleanedInput);
     if (ddgResponse) {
         return ddgResponse;
     }
 
-    // Default fallback response
-    return "Sorry, I couldn't find any information on that. Try asking me something different.";
+    // If no response found, provide a default message
+    return `Sorry, I couldn't find any specific information on that. Try asking me something different.`;
 }
 
 async function queryWikidata(query) {
     const keywords = tokenize(query).join(' ');
-
     const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(keywords)}&format=json&language=en&limit=1&origin=*`;
+
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -176,9 +180,10 @@ async function queryWikidata(query) {
     return null;
 }
 
+// Function to query DuckDuckGo for information
 async function queryDuckDuckGo(query) {
     const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`;
-    
+
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -193,7 +198,6 @@ async function queryDuckDuckGo(query) {
             result = data.RelatedTopics[0].Text;
         }
 
-        // Add attribution if there is a valid result
         if (result) {
             return `${result} <br> <br> - Found this on DuckDuckGo`;
         }
@@ -204,12 +208,13 @@ async function queryDuckDuckGo(query) {
     return null;
 }
 
-
+// Function to determine if the input is a calculation
 function isCalculation(input) {
-    const calculationPattern = /^(\d+)\s*[-+*/]\s*(\d+)$/; // Match simple arithmetic calculations like 1+1
+    const calculationPattern = /^(\d+)\s*[-+*/]\s*(\d+)$/; 
     return calculationPattern.test(input);
 }
 
+// Function to perform calculations
 function calculate(expression) {
     try {
         const result = new Function(`return ${expression}`)();
@@ -219,14 +224,14 @@ function calculate(expression) {
     }
 }
 
+// Find the best response from learning data or predefined responses
 function findBestLearningMatch(input) {
-    // Directly use the input without tokenization for full-sentence matching
     const result = fuse.search(input);
     if (result.length > 0) {
         return result[0].item.aiResponse;
     }
 
-    // Check if input matches predefined responses first (e.g., greetings, farewells)
+    // Fallback to predefined responses based on user input
     for (const category in responses) {
         if (responses[category].includes(input.toLowerCase())) {
             return responses[category][Math.floor(Math.random() * responses[category].length)];
@@ -236,32 +241,15 @@ function findBestLearningMatch(input) {
     return null;
 }
 
-function generateDynamicResponse(userInput) {
-    const responseTemplates = [
-        "That's interesting! Can you tell me more about that?",
-        "I'm not sure I follow. Could you clarify your thoughts?",
-        "Sounds good! What else do you want to discuss?",
-        "I see! How do you feel about that?",
-    ];
-
-    const randomIndex = Math.floor(Math.random() * responseTemplates.length);
-    return responseTemplates[randomIndex];
-}
-
-function updateConversationData(userInput, aiResponse) {
-    conversationData.history.push({ userInput, aiResponse });
-}
-
-function checkForRepetition(input, response) {
-    const previousConversation = conversationData.history.find(entry => entry.userInput === input);
-    return previousConversation ? generateDynamicResponse(input) : response;
-}
-
-function updateContext(input) {
-    const keywords = tokenize(input);
-    for (const keyword of keywords) {
-        conversationData.context[keyword] = true; // Mark keyword as part of the context
+// Update context based on user input
+function checkContext(input) {
+    // Implement your context handling logic here
+    // Example: Set context based on specific keywords or phrases in input
+    if (input.includes("weather")) {
+        conversationData.context.weather = true;
     }
+    // Add more context checks as needed
 }
 
-export { analyzeAndRespond };
+// Export necessary functions
+export { analyzeAndRespond, queryWikidata, queryDuckDuckGo, calculate, checkContext };
