@@ -1,6 +1,9 @@
 import { learningDataProvided } from './data.js';
-import { stemmingData } from './data.setmming.js';
+import { stemmingData } from './data.stemming.js';
+import { lemmatizationData } from './data.lemmatization.js';
+import { posDictionary } from './data.tags.js';
 import Fuse from 'https://cdn.skypack.dev/fuse.js';
+import nlp from 'https://cdn.skypack.dev/compromise';
 
 let conversationData = {
     history: [],
@@ -17,6 +20,7 @@ const responses = {
     confusion: ["huh", "what", "i don't understand"],
 };
 
+// Parse learning data
 function parseLearningData(data) {
     const conversations = data.trim().split('\n\n').filter(Boolean);
     const parsedData = [];
@@ -45,6 +49,13 @@ const fuse = new Fuse(parsedLearningData, {
     shouldSort: true,
 });
 
+// Function to tokenize text into words
+function tokenize(text) {
+    const stopWords = new Set(["who", "what", "when", "where", "why", "is", "the", "a", "of", "on", "and", "for", "with", "to", "from", "by"]);
+    const words = text.toLowerCase().match(/\w+/g) || []; // Extract words
+    return words.filter(word => !stopWords.has(word)); // Remove stop words
+}
+
 // Function to stem words based on the stemming data
 function stemWord(word) {
     for (const [root, inflections] of Object.entries(stemmingData)) {
@@ -55,102 +66,9 @@ function stemWord(word) {
     return word; // Return the word itself if no stemming is found
 }
 
-// Function to segment text into sentences
-function segmentSentences(text) {
-    return text.split(/(?<=[.!?])\s+/); // Split by sentence-ending punctuation followed by whitespace
-}
-
-// Function to tokenize text into words
-function tokenize(text) {
-    const stopWords = new Set(["who", "what", "when", "where", "why", "is", "the", "a", "of", "on", "and", "for", "with", "to", "from", "by"]);
-    const words = text.toLowerCase().match(/\w+/g) || []; // Extract words
-    return words.filter(word => !stopWords.has(word)); // Remove stop words
-}
-
-// Function to analyze and respond to user input
-export async function analyzeAndRespond(userInput) {
-    const cleanedInput = normalizeText(userInput);
-    updateContext(cleanedInput);
-
-    // Check if the input is a mathematical calculation
-    if (isCalculation(cleanedInput)) {
-        const calculationResult = calculate(cleanedInput);
-        updateConversationData(cleanedInput, calculationResult);
-        return calculationResult;
-    }
-
-    // Step 1: Try to match with local learning data using fuzzy matching
-    const learningResponse = findBestLearningMatch(cleanedInput);
-    if (learningResponse) {
-        const response = checkForRepetition(cleanedInput, learningResponse);
-        updateConversationData(cleanedInput, response);
-        return response;
-    }
-
-    // Step 2: If no match is found, try to get knowledge from Wikidata
-    const wikidataResponse = await queryWikidata(cleanedInput);
-    if (wikidataResponse) {
-        updateConversationData(cleanedInput, wikidataResponse);
-        return wikidataResponse;
-    }
-
-    // Step 3: If no match is found, return a default fallback response
-    const fallbackResponse = "Sorry, I couldn't find any information on that. Try asking me something different.";
-    updateConversationData(cleanedInput, fallbackResponse);
-    return fallbackResponse;
-}
-
-// Function to query Wikidata
-async function queryWikidata(query) {
-    const keywords = tokenize(query).join(' '); // Use tokenized keywords
-    const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(keywords)}&format=json&language=en&limit=1&origin=*`;
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error("Failed to fetch from Wikidata");
-        }
-        const data = await response.json();
-
-        if (data.search && data.search.length > 0) {
-            const item = data.search[0];
-            const link = `https://www.wikidata.org/wiki/${item.id}`;
-            return `I found information about "<strong>${item.label}</strong>": ${item.description || 'No description available.'} <a href="${link}" target="_blank">More info</a>`;
-        }
-    } catch (error) {
-        console.error('Error fetching from Wikidata:', error);
-        return null;
-    }
-
-    return null;
-}
-
-function isCalculation(input) {
-    const calculationPattern = /(\bpi\b|[-+]?[0-9]*\.?[0-9]+)(\s*[-+*/]\s*(\bpi\b|[-+]?[0-9]*\.?[0-9]+))+/;
-    return calculationPattern.test(input);
-}
-
-function calculate(expression) {
-    try {
-        const modifiedExpression = expression
-            .replace(/\bpi\b/g, 'Math.PI')
-            .replace(/(\b(sin|cos|tan|sqrt|abs)\b)/g, 'Math.$1');
-
-        const result = new Function(`return ${modifiedExpression}`)();
-        return `The result is: ${result}`;
-    } catch (error) {
-        return "Sorry, I couldn't calculate that.";
-    }
-}
-
-function findBestLearningMatch(input) {
-    const keywords = tokenize(input); // Tokenize the input
-    const stemmedKeywords = keywords.map(stemWord); // Stem the tokenized keywords
-    const result = fuse.search(stemmedKeywords.join(' ')); // Search using the stemmed keywords
-    if (result.length > 0) {
-        return result[0].item.aiResponse; // Return the closest matching response
-    }
-    return null; // No match found
+// Function to lemmatize words based on the lemmatization data
+function lemmatizeWord(word) {
+    return lemmatizationData[word] || word; // Return the lemma if found, otherwise the word itself
 }
 
 function normalizeText(text) {
@@ -160,17 +78,162 @@ function normalizeText(text) {
         "r": "are",
         "wat": "what"
     };
-
-    let normalized = text.toLowerCase().replace(/[.,!?]/g, '').replace(/\s+/g, ' ').trim();
+    
+    // Normalize punctuation and trim spaces
+    let normalized = text.toLowerCase().replace(/[.,!?]+/g, ' ').replace(/\s+/g, ' ').trim();
     
     // Replace common typos
     for (const [typo, correct] of Object.entries(commonTypos)) {
         normalized = normalized.replace(new RegExp(`\\b${typo}\\b`, 'g'), correct);
     }
+    
+    return normalized;
+}
 
-    // Stem words
-    const words = normalized.split(' ').map(stemWord);
-    return words.join(' ');
+function segmentSentences(text) {
+    // Improved to account for common sentence structures and punctuation
+    return text.split(/(?<=[.!?])\s+|(?<=\b(and|but|or|so)\b)\s+/i).filter(Boolean);
+}
+
+// Function for part of speech tagging
+function tagPartOfSpeech(words) {
+    return words.map(word => {
+        const tag = posDictionary[word] || 'Unknown';
+        return { word, tag };
+    });
+}
+
+// Function for named entity tagging
+function tagNamedEntities(input) {
+    const doc = nlp(input);
+    const entities = doc.people().out('array').map(person => ({ word: person, tag: 'Person' }))
+        .concat(doc.places().out('array').map(place => ({ word: place, tag: 'Place' })))
+        .concat(doc.organizations().out('array').map(org => ({ word: org, tag: 'Organization' })));
+
+    return entities;
+}
+
+async function analyzeAndRespond(userInput) {
+    const segmentedInput = segmentSentences(userInput); // Split input into segments
+    const responses = [];
+
+    for (const segment of segmentedInput) {
+        const cleanedInput = normalizeText(segment);
+        const response = await generateResponse(cleanedInput);
+        responses.push(response);
+    }
+
+    return responses.join(' ');
+}
+
+async function generateResponse(cleanedInput) {
+    // Check if the input is a mathematical calculation
+    if (isCalculation(cleanedInput)) {
+        return calculate(cleanedInput);
+    }
+
+    // Try to match with local learning data using fuzzy matching
+    const learningResponse = findBestLearningMatch(cleanedInput);
+    if (learningResponse) {
+        return learningResponse;
+    }
+
+    // Try to get knowledge from Wikidata
+    const wikidataResponse = await queryWikidata(cleanedInput);
+    if (wikidataResponse) {
+        return wikidataResponse;
+    }
+
+    // If Wikidata doesn't have an answer, query DuckDuckGo as a backup
+    const ddgResponse = await queryDuckDuckGo(cleanedInput);
+    if (ddgResponse) {
+        return ddgResponse;
+    }
+
+    // Default fallback response
+    return "Sorry, I couldn't find any information on that. Try asking me something different.";
+}
+
+async function queryWikidata(query) {
+    const keywords = tokenize(query).join(' ');
+
+    const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(keywords)}&format=json&language=en&limit=1&origin=*`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error("Failed to fetch from Wikidata");
+        }
+        const data = await response.json();
+        if (data.search && data.search.length > 0) {
+            const item = data.search[0];
+            const link = `https://www.wikidata.org/wiki/${item.id}`;
+            return `I found information about "<strong>${item.label}</strong>": ${item.description || 'No description available.'} <a href="${link}" target="_blank">More info</a> <br> <br> - Found this on Wikidata`;
+        }
+    } catch (error) {
+        console.error('Error fetching from Wikidata:', error);
+        return null;
+    }
+    return null;
+}
+
+async function queryDuckDuckGo(query) {
+    const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`;
+    
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error("Failed to fetch from DuckDuckGo");
+        }
+        const data = await response.json();
+        let result = null;
+
+        if (data.AbstractText) {
+            result = data.AbstractText;
+        } else if (data.RelatedTopics && data.RelatedTopics.length > 0) {
+            result = data.RelatedTopics[0].Text;
+        }
+
+        // Add attribution if there is a valid result
+        if (result) {
+            return `${result} <br> <br> - Found this on DuckDuckGo`;
+        }
+    } catch (error) {
+        console.error('Error fetching from DuckDuckGo:', error);
+        return null;
+    }
+    return null;
+}
+
+
+function isCalculation(input) {
+    const calculationPattern = /^(\d+)\s*[-+*/]\s*(\d+)$/; // Match simple arithmetic calculations like 1+1
+    return calculationPattern.test(input);
+}
+
+function calculate(expression) {
+    try {
+        const result = new Function(`return ${expression}`)();
+        return `The result is: ${result}`;
+    } catch (error) {
+        return "Sorry, I couldn't calculate that.";
+    }
+}
+
+function findBestLearningMatch(input) {
+    // Directly use the input without tokenization for full-sentence matching
+    const result = fuse.search(input);
+    if (result.length > 0) {
+        return result[0].item.aiResponse;
+    }
+
+    // Check if input matches predefined responses first (e.g., greetings, farewells)
+    for (const category in responses) {
+        if (responses[category].includes(input.toLowerCase())) {
+            return responses[category][Math.floor(Math.random() * responses[category].length)];
+        }
+    }
+
+    return null;
 }
 
 function generateDynamicResponse(userInput) {
@@ -178,39 +241,27 @@ function generateDynamicResponse(userInput) {
         "That's interesting! Can you tell me more about that?",
         "I'm not sure I follow. Could you clarify your thoughts?",
         "Sounds good! What else do you want to discuss?",
-        "I see! How can I assist you further?",
-        "That makes sense. What's your next question?",
-        "I'm here to help! What do you need assistance with?",
-        "Could you elaborate on that?"
+        "I see! How do you feel about that?",
     ];
 
-    const randomResponse = responseTemplates[Math.floor(Math.random() * responseTemplates.length)];
-    return randomResponse;
-}
-
-function checkForRepetition(userInput, aiResponse) {
-    const lastResponse = conversationData.history.length > 0 ? conversationData.history[conversationData.history.length - 1].aiResponse : null;
-    const recentInputs = conversationData.history.map(entry => entry.userInput);
-
-    if (recentInputs.includes(userInput) && aiResponse === lastResponse) {
-        return generateDynamicResponse(userInput);
-    }
-
-    return aiResponse;
-}
-
-function updateContext(input) {
-    if (input.includes('name')) {
-        conversationData.context.name = true;
-    } else if (input.includes('age')) {
-        conversationData.context.age = true;
-    }
+    const randomIndex = Math.floor(Math.random() * responseTemplates.length);
+    return responseTemplates[randomIndex];
 }
 
 function updateConversationData(userInput, aiResponse) {
     conversationData.history.push({ userInput, aiResponse });
 }
 
-export default {
-    analyzeAndRespond
-};
+function checkForRepetition(input, response) {
+    const previousConversation = conversationData.history.find(entry => entry.userInput === input);
+    return previousConversation ? generateDynamicResponse(input) : response;
+}
+
+function updateContext(input) {
+    const keywords = tokenize(input);
+    for (const keyword of keywords) {
+        conversationData.context[keyword] = true; // Mark keyword as part of the context
+    }
+}
+
+export { analyzeAndRespond };

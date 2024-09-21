@@ -97,5 +97,6 @@ Here’s a simple example that ties everything together:
 An example on how to use the engine can be found on ["examples" folder](https://github.com/Byson94/AetherLexLib_JS/tree/main/examples), you can test it here: [AetherLexLib AI Chatbot](https://byson94.github.io/AetherLexLib_JS/examples/)
 
 ## Credits
-- This chatbot library uses the ["Fuse"](https://github.com/krisk/Fuse/tree/v7.0.0) library which is licensed under ["Apache 2.0"](https://www.apache.org/licenses/LICENSE-2.0.html)
-- For more knowledge the AI also uses [WikiData](https://www.wikidata.org/) which is licensed under CC0.
+- This chatbot library uses the ["Fuse"](https://github.com/krisk/Fuse/tree/v7.0.0) library which is licensed under ["Apache 2.0"](https://www.apache.org/licenses/LICENSE-2.0.html).
+- For more knowledge, the AI also uses [WikiData](https://www.wikidata.org/) which is licensed under CC0.
+- Additionally, the AI utilizes [DuckDuckGo](https://duckduckgo.com/) for supplementary search data (DuckDuckGo under its own terms).
