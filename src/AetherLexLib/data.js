@@ -2,6 +2,8 @@
 export const learningDataProvided = `
 Hello.
 Greetings.
+no.
+Understood! If there's anything else you'd like to discuss, let me know.
 How are you?
 I am functioning optimally. How can I assist you today?
 Good. Do you speak English?
@@ -1038,7 +1040,6 @@ Thanks! I feel ready to take on new challenges now.
 I’m glad to hear that! I’m here whenever you need assistance.
 Hey.
 Hi.
-Hello.
 What’s up?
 Not much, you?
 Nvrm.
@@ -1051,7 +1052,6 @@ Nice.
 Sure.
 Sounds good.
 Yup.
-Yeah.
 Yep.
 Nah.
 Nope.
@@ -2186,12 +2186,6 @@ What is the role of play therapy in child development?
 Play therapy promotes emotional expression, social skills, and coping strategies, supporting children's overall development and well-being.
 What is the impact of climate change on biodiversity? 
 Climate change can threaten biodiversity by altering habitats, disrupting ecosystems, and leading to species extinction.
-Hi. 
-Hello!
-How are you? 
-I am functioning optimally. How can I assist you today?
-What should I do now? 
-I'm sorry, but I didn't quite get that. Could you please clarify or ask differently?
 I'm bored! 
 How about we explore a new topic together? What interests you?
 How do you function? 
