@@ -98,3 +98,4 @@ An example on how to use the engine can be found on ["examples" folder](https://
 
 ## Credits
 - This chatbot library uses the ["Fuse"](https://github.com/krisk/Fuse/tree/v7.0.0) library which is licensed under ["Apache 2.0"](https://www.apache.org/licenses/LICENSE-2.0.html)
+- For more knowledge the AI also uses [WikiData](https://www.wikidata.org/) which is licensed under CC0.
