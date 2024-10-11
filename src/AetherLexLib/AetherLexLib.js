@@ -68,6 +68,58 @@ function lemmatizeWord(word) {
     return lemmatizationData[word] || word; 
 }
 
+function detectIntent(userInput) {
+    const lowerCaseInput = userInput.toLowerCase();
+
+    // Check for greetings
+    if (responses.greetings.some(greeting => lowerCaseInput.includes(greeting))) {
+        return 'greetings';
+    }
+
+    // Check for farewells
+    if (responses.farewell.some(farewell => lowerCaseInput.includes(farewell))) {
+        return 'farewell';
+    }
+
+    // Check for affirmations
+    if (responses.affirmations.some(affirmation => lowerCaseInput.includes(affirmation))) {
+        return 'affirmations';
+    }
+
+    // Check for negations
+    if (responses.negations.some(negation => lowerCaseInput.includes(negation))) {
+        return 'negations';
+    }
+
+    // Check for gratitude
+    if (responses.gratitude.some(gratitude => lowerCaseInput.includes(gratitude))) {
+        return 'gratitude';
+    }
+
+    // Check for help requests
+    if (responses.help.some(help => lowerCaseInput.includes(help))) {
+        return 'help';
+    }
+
+    // Check for confusion
+    if (responses.confusion.some(confused => lowerCaseInput.includes(confused))) {
+        return 'confusion';
+    }
+
+    // Check for questions
+    if (responses.questions.some(question => lowerCaseInput.includes(question))) {
+        return 'questions';
+    }
+
+    // Check for calculations or math operations
+    if (/calculate|solve|result|math|add|subtract|multiply|divide|sum|total/i.test(lowerCaseInput)) {
+        return 'calculation';
+    }
+
+    // Default case for unrecognized input
+    return 'unknown';
+}
+
 function normalizeText(text) {
     const commonTypos = {
         "yu": "you",
@@ -223,9 +275,11 @@ async function queryDuckDuckGo(query) {
 
 // Function to determine if the input is a calculation
 function isCalculation(input) {
-    const calculationPattern = /^(\d+)\s*[-+*/]\s*(\d+)$/; 
+    // This pattern captures basic arithmetic operations (+, -, *, /) with numbers
+    const calculationPattern = /^(\d+(\.\d+)?(\s*[-+*/]\s*\d+(\.\d+)?)+)$/; 
     return calculationPattern.test(input);
 }
+
 
 // Function to perform calculations
 function calculate(expression) {

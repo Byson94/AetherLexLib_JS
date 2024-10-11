@@ -4,6 +4,10 @@ A lightweight chatbot library. (NOTE: This library needs the user to be connecte
 
 Check out the example at: [AetherLexLib AI Chatbot](https://byson94.github.io/AetherLexLib_JS/examples/)
 
+## Table of contents:
+-  [Installation & use](#how-to-download)
+- [API init & use](#AetherLexAPI)
+
 ## How to download??
 This project is under "MIT LICENSE" so it is free and you can use it, modify it etc. but only if you included the copy of the license of the project you used. 
 
@@ -95,6 +99,61 @@ Here’s a simple example that ties everything together:
 ```
 
 An example on how to use the engine can be found on ["examples" folder](https://github.com/Byson94/AetherLexLib_JS/tree/main/examples), you can test it here: [AetherLexLib AI Chatbot](https://byson94.github.io/AetherLexLib_JS/examples/)
+
+
+## AetherLexAPI
+If you are unable to use the library via cdn or  npm, you can use the AetherLexAPI directly. This is a simple API that you can use to  interact with the AI.
+
+```
+const message = "hello";
+const response = await fetch('https://aetherlexlib-js.onrender.com/api/analyze', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ analyzedResult:message }),
+});
+
+if (!response.ok) {
+    throw new Error(`Error: ${response.status}`);
+}
+
+const data = await response.json();
+responseDiv.innerHTML = `<p>Response: ${JSON.stringify(data.processedResult)}</p>`;
+```
+
+Thats it! with this, you can send and recieve  messages from the AI. 
+
+The body is the most important thing of sending requests and it is also the one that can cause you problems!
+
+You need to exactly add `analyzedResult:` as the message  key and the message as the value. If you do not do this, the AI will not respond and throw and error telling to use `analyzedResult:`
+
+The response the AI will give, will be in JSON form, but for some reason if you need to just get the response as plain text and not JSON, just add this in the body element along with the `analyzedResult:`
+
+```
+body: JSON.stringify({ analyzedResult:message, isJson: false })
+```
+
+If isJson is false, then the API would only respond with plain text.
+
+Example:
+
+```
+const response = await fetch('https://aetherlexlib-js.onrender.com/api/analyze', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ analyzedResult:message, isJson: false }),
+});
+
+if (!response.ok) {
+    throw new Error(`Error: ${response.status}`);
+}
+
+const data = await response.text();
+responseDiv.innerHTML = `<p>Response: ${data}</p>`;
+```
 
 ## Credits
 - This chatbot library uses the ["Fuse"](https://github.com/krisk/Fuse/tree/v7.0.0) library which is licensed under ["Apache 2.0"](https://www.apache.org/licenses/LICENSE-2.0.html).

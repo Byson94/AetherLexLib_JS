@@ -2,6 +2,8 @@
 export const learningDataProvided = `
 Hello.
 Greetings.
+no.
+Understood! If there's anything else you'd like to discuss, let me know.
 How are you?
 I am functioning optimally. How can I assist you today?
 Good. Do you speak English?
@@ -1038,7 +1040,6 @@ Thanks! I feel ready to take on new challenges now.
 I’m glad to hear that! I’m here whenever you need assistance.
 Hey.
 Hi.
-Hello.
 What’s up?
 Not much, you?
 Nvrm.
@@ -1051,7 +1052,6 @@ Nice.
 Sure.
 Sounds good.
 Yup.
-Yeah.
 Yep.
 Nah.
 Nope.
@@ -2186,12 +2186,6 @@ What is the role of play therapy in child development?
 Play therapy promotes emotional expression, social skills, and coping strategies, supporting children's overall development and well-being.
 What is the impact of climate change on biodiversity? 
 Climate change can threaten biodiversity by altering habitats, disrupting ecosystems, and leading to species extinction.
-Hi. 
-Hello!
-How are you? 
-I am functioning optimally. How can I assist you today?
-What should I do now? 
-I'm sorry, but I didn't quite get that. Could you please clarify or ask differently?
 I'm bored! 
 How about we explore a new topic together? What interests you?
 How do you function? 
@@ -4734,4 +4728,682 @@ What is the flag of Mexico?
 The flag of Mexico consists of three vertical stripes of green, white, and red, with the national coat of arms in the centre.
 What do the colors of the Mexican flag represent?
 Green symbolizes hope, white symbolizes purity, and red symbolizes the blood of national heroes.
+What is the capital of France?  
+The capital of France is Paris.  
+What is the largest planet in our solar system?  
+The largest planet in our solar system is Jupiter.  
+What is the boiling point of water?  
+The boiling point of water is 100 degrees Celsius at standard atmospheric pressure.  
+Who wrote "Romeo and Juliet"?  
+"Romeo and Juliet" was written by William Shakespeare.  
+What is the chemical symbol for gold?  
+The chemical symbol for gold is Au.  
+What is the currency of Japan?  
+The currency of Japan is the yen.  
+What is the Pythagorean theorem?  
+The Pythagorean theorem states that in a right triangle, the square of the length of the hypotenuse is equal to the sum of the squares of the lengths of the other two sides.  
+What is the speed of light?  
+The speed of light in a vacuum is approximately 299,792 kilometers per second (186,282 miles per second).  
+What is the main function of red blood cells?  
+The main function of red blood cells is to transport oxygen from the lungs to the rest of the body.  
+What is the formula for calculating the area of a circle?  
+The formula for calculating the area of a circle is A = πr², where r is the radius of the circle.  
+What is the theory of evolution?  
+The theory of evolution posits that species change over time through natural selection and adaptation to their environments.  
+Who was the first person to walk on the moon?  
+The first person to walk on the moon was Neil Armstrong on July 20, 1969.  
+What is a black hole?  
+A black hole is a region of space where the gravitational pull is so strong that nothing, not even light, can escape from it.  
+What is the smallest country in the world?  
+The smallest country in the world is Vatican City.  
+What is the main ingredient in guacamole?  
+The main ingredient in guacamole is avocado.  
+What is the largest ocean on Earth?  
+The largest ocean on Earth is the Pacific Ocean.  
+What is photosynthesis?  
+Photosynthesis is the process by which green plants and some other organisms use sunlight to synthesize foods with the help of chlorophyll.  
+What are the three states of matter?  
+The three states of matter are solid, liquid, and gas.  
+What is the process of mitosis?  
+Mitosis is the process by which a cell divides to produce two identical daughter cells.  
+What is the Great Wall of China?  
+The Great Wall of China is a series of fortifications made of various materials that were built to protect Chinese states from invasions.  
+What is the longest river in the world?  
+The longest river in the world is the Nile River.  
+What is the main ingredient in guacamole?  
+The main ingredient in guacamole is avocado.  
+What is the largest ocean on Earth?  
+The largest ocean on Earth is the Pacific Ocean.  
+What is photosynthesis?  
+Photosynthesis is the process by which green plants and some other organisms use sunlight to synthesize foods with the help of chlorophyll.  
+What are the three states of matter?  
+The three states of matter are solid, liquid, and gas.  
+What is the process of mitosis?  
+Mitosis is the process by which a cell divides to produce two identical daughter cells.  
+What is the Great Wall of China?  
+The Great Wall of China is a series of fortifications built to protect Chinese states from invasions.  
+What is the longest river in the world?  
+The longest river in the world is the Nile River.  
+Who discovered penicillin?  
+Penicillin was discovered by Alexander Fleming in 1928.  
+What is the formula for calculating the circumference of a circle?  
+The formula for calculating the circumference of a circle is C = 2πr, where r is the radius.  
+What is the primary gas found in the Earth's atmosphere?  
+The primary gas in the Earth's atmosphere is nitrogen, making up about 78%.  
+What is the hardest natural substance on Earth?  
+The hardest natural substance on Earth is diamond.  
+What is the capital of Australia?  
+The capital of Australia is Canberra.  
+What is the smallest bone in the human body?  
+The smallest bone in the human body is the stapes, located in the middle ear.  
+What is the human body's largest organ?  
+The largest organ in the human body is the skin.  
+What is the function of the pancreas?  
+The pancreas produces digestive enzymes and hormones, including insulin.  
+What is the process of cellular respiration?  
+Cellular respiration is the process by which cells convert glucose and oxygen into energy, carbon dioxide, and water.  
+What is the most widely spoken language in the world?  
+The most widely spoken language in the world is English.  
+What is the significance of the Magna Carta?  
+The Magna Carta, signed in 1215, limited the power of the monarchy and laid the foundation for modern democracy.  
+What is the primary function of the lungs?  
+The primary function of the lungs is to facilitate gas exchange, allowing oxygen to enter the bloodstream and carbon dioxide to be expelled.  
+Who painted the Mona Lisa?  
+The Mona Lisa was painted by Leonardo da Vinci.  
+What is the main purpose of the United Nations?  
+The main purpose of the United Nations is to promote peace, security, and cooperation among countries.  
+What are the four seasons?  
+The four seasons are spring, summer, autumn (fall), and winter.  
+What is the main source of energy for the Earth?  
+The main source of energy for the Earth is the Sun.  
+What is DNA?  
+DNA (deoxyribonucleic acid) is the molecule that carries genetic information in living organisms.  
+What is a comet?  
+A comet is a small celestial body made of ice, dust, and gas that orbits the Sun and has a tail when close to it.  
+What is the capital of Canada?  
+The capital of Canada is Ottawa.  
+What are plate tectonics?  
+Plate tectonics is the theory that explains the movement of the Earth's lithosphere, which is divided into tectonic plates.  
+What is the significance of the Berlin Wall?  
+The Berlin Wall symbolized the division between East and West Berlin during the Cold War until its fall in 1989.  
+What is the main purpose of a business plan?  
+The main purpose of a business plan is to outline the strategy, goals, and financial forecasts of a business.  
+What is renewable energy?  
+Renewable energy comes from sources that are naturally replenished, such as solar, wind, and hydroelectric power.  
+What is the theory of relativity?  
+The theory of relativity, formulated by Albert Einstein, describes the relationship between space, time, and gravity.  
+What is the significance of the periodic table?  
+The periodic table organizes chemical elements based on their properties and atomic structure.  
+What is a galaxy?  
+A galaxy is a large system of stars, gas, dust, and dark matter bound together by gravity.  
+What is the capital of Italy?  
+The capital of Italy is Rome.  
+What is a renewable resource?  
+A renewable resource is a natural resource that can be replenished naturally, such as trees, water, and wind energy.  
+What is the main ingredient in bread?  
+The main ingredient in bread is flour, typically made from wheat.  
+What is the function of the kidneys?  
+The kidneys filter waste products from the blood and regulate fluid balance in the body.  
+What is an ecosystem?  
+An ecosystem is a community of living organisms interacting with their physical environment.  
+What is the capital of Egypt?  
+The capital of Egypt is Cairo.  
+What is the greenhouse effect?  
+The greenhouse effect is the warming of the Earth's surface due to the trapping of heat by greenhouse gases in the atmosphere.  
+What is the main purpose of the Federal Reserve?  
+The main purpose of the Federal Reserve is to regulate the U.S. monetary system and provide financial stability.  
+What is a chemical reaction?  
+A chemical reaction is a process that leads to the transformation of one set of chemical substances into another.  
+What is the significance of the Renaissance?  
+The Renaissance was a cultural movement that marked the transition from the Middle Ages to modernity, emphasizing art, science, and humanism.  
+What is the capital of Germany?  
+The capital of Germany is Berlin.  
+What is a hypothesis?  
+A hypothesis is a proposed explanation for a phenomenon, which can be tested through experimentation.  
+What is the role of chlorophyll in plants?  
+Chlorophyll is a pigment in plants that captures sunlight for photosynthesis.  
+What is the capital of Brazil?  
+The capital of Brazil is Brasília.  
+What is the significance of the Emancipation Proclamation?  
+The Emancipation Proclamation, issued by Abraham Lincoln in 1863, declared the freedom of all enslaved people in Confederate-held territory.  
+What is the function of the heart?  
+The heart pumps blood throughout the body, supplying oxygen and nutrients to tissues.  
+What is a vaccine?  
+A vaccine is a biological preparation that provides immunity to a particular infectious disease.  
+What is the capital of Mexico?  
+The capital of Mexico is Mexico City.  
+What is the primary function of the liver?  
+The primary function of the liver is to process nutrients and detoxify harmful substances in the body.  
+What is a metaphor?  
+A metaphor is a figure of speech that describes an object or action in a way that isn’t literally true but helps explain an idea.  
+What is the capital of Spain?  
+The capital of Spain is Madrid.  
+What is the main purpose of a marketing strategy?  
+The main purpose of a marketing strategy is to identify target customers and develop a plan to reach them effectively.  
+What is a logarithm?  
+A logarithm is the exponent by which a base must be raised to produce a given number.  
+What is the function of enzymes?  
+Enzymes are biological catalysts that speed up chemical reactions in living organisms.  
+What is the capital of India?  
+The capital of India is New Delhi.  
+What is the significance of the Civil Rights Movement?  
+The Civil Rights Movement aimed to end racial discrimination and secure equal rights for African Americans in the United States.  
+What is a tsunami?  
+A tsunami is a series of ocean waves caused by large disturbances, such as earthquakes or volcanic eruptions.  
+What is the capital of South Africa?  
+The capital of South Africa is Pretoria (administrative), Bloemfontein (judicial), and Cape Town (legislative).  
+What is the theory of gravity?  
+The theory of gravity describes the attraction between masses, formulated by Isaac Newton and later refined by Einstein.  
+What is the primary function of the skeletal system?  
+The primary function of the skeletal system is to provide structure and support to the body and protect vital organs.  
+What is the capital of China?  
+The capital of China is Beijing.  
+What is an ecosystem?  
+An ecosystem is a community of living organisms interacting with their physical environment.  
+What is the role of mitochondria in cells?  
+Mitochondria are known as the powerhouse of the cell, producing energy in the form of ATP through cellular respiration.  
+What is the capital of Russia?  
+The capital of Russia is Moscow.  
+What is an atom?  
+An atom is the smallest unit of matter that retains the properties of an element.  
+What is a solar eclipse?  
+A solar eclipse occurs when the Moon passes between the Earth and the Sun, blocking all or part of the Sun's light.  
+What is the main purpose of a budget?  
+The main purpose of a budget is to plan and control financial resources effectively.  
+What is the capital of Sweden?  
+The capital of Sweden is Stockholm.  
+What is the process of osmosis?  
+Osmosis is the movement of water molecules through a semipermeable membrane from a region of lower solute concentration to a higher solute concentration.  
+What is a binary star?  
+A binary star system consists of two stars that orbit around a common center of mass.  
+What is the main ingredient in pasta?  
+The main ingredient in pasta is wheat flour, usually combined with water and eggs.  
+What is the capital of Argentina?  
+The capital of Argentina is Buenos Aires.  
+What is the importance of biodiversity?  
+Biodiversity is crucial for ecosystem stability, resilience, and the provision of ecosystem services.  
+What is a polymer?  
+A polymer is a large molecule made up of repeating structural units called monomers.  
+What is the significance of the internet?  
+The internet has revolutionized communication, information sharing, and access to resources globally.  
+What is the capital of Thailand?  
+The capital of Thailand is Bangkok.  
+What is a biome?  
+A biome is a large geographic biotic unit, a major community of plants and animals with similar life forms and environmental conditions.  
+What is the primary function of white blood cells?  
+The primary function of white blood cells is to defend the body against infections and foreign invaders.  
+What is the capital of Turkey?  
+The capital of Turkey is Ankara.  
+What is the significance of the Industrial Revolution?  
+The Industrial Revolution marked a major turning point in history, with changes in manufacturing, transportation, and technology that transformed economies and societies.  
+What is a quasar?  
+A quasar is an extremely luminous active galactic nucleus powered by a supermassive black hole.  
+What is the primary purpose of a scientific experiment?  
+The primary purpose of a scientific experiment is to test a hypothesis and gather data to support or refute it.  
+What is the capital of Nigeria?  
+The capital of Nigeria is Abuja.  
+What is the function of the immune system?  
+The immune system protects the body from infections and diseases by identifying and destroying pathogens.  
+What is the significance of the Declaration of Independence?  
+The Declaration of Independence, adopted in 1776, announced the separation of the 13 colonies from British rule and outlined the principles of individual rights.  
+What is a neutron star?  
+A neutron star is a compact, dense stellar remnant composed primarily of neutrons, formed after a supernova explosion.  
+What is the capital of Italy?  
+The capital of Italy is Rome.  
+What is the difference between a virus and a bacterium?  
+Viruses are non-living entities that require a host cell to replicate, while bacteria are living microorganisms that can reproduce independently.  
+What is a renewable energy source?  
+A renewable energy source is an energy source that can be replenished naturally, such as solar, wind, and hydroelectric energy.  
+What is the capital of the Philippines?  
+The capital of the Philippines is Manila.  
+What is the significance of the Bill of Rights?  
+The Bill of Rights consists of the first ten amendments to the U.S. Constitution, guaranteeing individual freedoms and rights.  
+What is a nebula?  
+A nebula is a giant cloud of gas and dust in space, often the birthplace of stars.  
+What is the capital of Norway?  
+The capital of Norway is Oslo.  
+What is the role of the hypothalamus?  
+The hypothalamus regulates various bodily functions, including temperature, hunger, and the sleep-wake cycle.  
+What is the primary purpose of the World Health Organization (WHO)?  
+The primary purpose of WHO is to direct international health efforts and coordinate responses to global health issues.  
+What is the capital of Greece?  
+The capital of Greece is Athens.  
+What is an asteroid?  
+An asteroid is a small rocky body that orbits the Sun, primarily found in the asteroid belt between Mars and Jupiter.  
+What is the process of natural selection?  
+Natural selection is the process by which organisms better adapted to their environment tend to survive and produce more offspring.  
+What is the capital of Kenya?  
+The capital of Kenya is Nairobi.  
+What is a habitat?  
+A habitat is the natural environment in which a species or community of organisms lives.  
+What is the primary function of the digestive system?  
+The primary function of the digestive system is to break down food, absorb nutrients, and eliminate waste.  
+What is the capital of Venezuela?  
+The capital of Venezuela is Caracas.  
+What is the importance of the ozone layer?  
+The ozone layer protects life on Earth by absorbing the majority of the Sun's harmful ultraviolet radiation.  
+What is a chloroplast?  
+A chloroplast is an organelle in plant cells that conducts photosynthesis, converting light energy into chemical energy.  
+What is the capital of Finland?  
+The capital of Finland is Helsinki.  
+What is a black hole?  
+A black hole is a region of spacetime with a gravitational pull so strong that nothing can escape from it, not even light.  
+What is the significance of the Treaty of Versailles?  
+The Treaty of Versailles ended World War I and imposed heavy reparations on Germany, contributing to the rise of World War II.  
+What is a synapse?  
+A synapse is the junction between two neurons where information is transmitted from one neuron to another.  
+What is the capital of Indonesia?  
+The capital of Indonesia is Jakarta.  
+What is the role of the cerebellum?  
+The cerebellum is responsible for coordinating voluntary movements and maintaining posture and balance.  
+What is the significance of the Great Barrier Reef?  
+The Great Barrier Reef is the largest coral reef system in the world and is vital for marine biodiversity.  
+What is a tsunami?  
+A tsunami is a series of large ocean waves caused by underwater earthquakes or volcanic eruptions.  
+What is the capital of Malaysia?  
+The capital of Malaysia is Kuala Lumpur.  
+What is a chromosome?  
+A chromosome is a long strand of DNA that contains genes, the hereditary units of organisms.  
+What is the primary purpose of the Federal Bureau of Investigation (FBI)?  
+The primary purpose of the FBI is to investigate and enforce federal laws in the United States.  
+What is the capital of Belgium?  
+The capital of Belgium is Brussels.  
+What is a fossil?  
+A fossil is the preserved remains or traces of ancient organisms, providing evidence of past life on Earth.  
+What is the function of the adrenal glands?  
+The adrenal glands produce hormones that help regulate metabolism, immune response, and stress responses.  
+What is the capital of Portugal?  
+The capital of Portugal is Lisbon.  
+What is a vector in biology?  
+A vector in biology is an organism that transmits pathogens or genetic material from one host to another.  
+What is the significance of the Louisiana Purchase?  
+The Louisiana Purchase was a land deal between the United States and France in 1803, which doubled the size of the U.S.  
+What is a solstice?  
+A solstice is an astronomical event that occurs when the Sun reaches its highest or lowest point in the sky at noon, marking the longest and shortest days of the year.  
+What is the capital of Chile?  
+The capital of Chile is Santiago.  
+What is a biome?  
+A biome is a large geographical area characterized by specific plant and animal groups adapted to the environment.  
+What is the primary role of ribosomes?  
+Ribosomes are responsible for synthesizing proteins by translating messenger RNA (mRNA).  
+What is the capital of Iceland?  
+The capital of Iceland is Reykjavík.  
+What is a proton?  
+A proton is a positively charged subatomic particle found in the nucleus of an atom.  
+What is the significance of the Cold War?  
+The Cold War was a period of geopolitical tension between the Soviet Union and the United States, influencing global politics and conflicts from the late 1940s to the early 1990s.  
+What is the capital of Denmark?  
+The capital of Denmark is Copenhagen.  
+What is a comet?  
+A comet is a small celestial body that orbits the Sun, composed of ice, dust, and rocky material, often exhibiting a glowing coma and tail when close to the Sun.  
+What is the function of hemoglobin?  
+Hemoglobin is a protein in red blood cells that carries oxygen from the lungs to the rest of the body.  
+What is the capital of Croatia?  
+The capital of Croatia is Zagreb.  
+What is the significance of the Space Race?  
+The Space Race was a competition between the United States and the Soviet Union for supremacy in space exploration, leading to significant technological advancements.  
+What is a gene?  
+A gene is a segment of DNA that contains the instructions for building proteins and determining inherited traits.  
+What is the capital of Serbia?  
+The capital of Serbia is Belgrade.  
+What is the role of the pituitary gland?  
+The pituitary gland, often referred to as the "master gland," regulates various hormonal functions in the body, including growth and metabolism.  
+What is the significance of the Black Death?  
+The Black Death was a devastating plague that swept through Europe in the 14th century, killing millions and leading to significant social and economic changes.  
+What is an exoplanet?  
+An exoplanet is a planet located outside our solar system, orbiting a star.  
+What is the capital of Egypt?  
+The capital of Egypt is Cairo.  
+What is a tundra?  
+A tundra is a cold, treeless biome characterized by short growing seasons and permafrost.  
+What is the primary function of the thyroid gland?  
+The primary function of the thyroid gland is to regulate metabolism and energy production in the body through hormone secretion.  
+What is the capital of Hungary?  
+The capital of Hungary is Budapest.  
+What is a mineral?  
+A mineral is a naturally occurring inorganic solid with a definite chemical composition and crystal structure.  
+What is the significance of the women's suffrage movement?  
+The women's suffrage movement sought to secure the right to vote for women, achieving significant progress in the early 20th century.  
+What is a solar system?  
+A solar system is a star and the celestial bodies that orbit it, including planets, moons, asteroids, and comets.  
+What is the capital of New Zealand?  
+The capital of New Zealand is Wellington.  
+What is the process of fermentation?  
+Fermentation is a metabolic process that converts sugar to acids, gases, or alcohol using microorganisms, often used in food production.  
+What is a symbiotic relationship?  
+A symbiotic relationship is an interaction between two different organisms living in close physical proximity, which can be beneficial, neutral, or harmful to one or both parties.  
+What is the capital of Nepal?  
+The capital of Nepal is Kathmandu.  
+What is the role of the central nervous system?  
+The central nervous system processes information and coordinates responses throughout the body, consisting of the brain and spinal cord.  
+What is a supernova?  
+A supernova is a powerful and luminous explosion of a star that occurs at the end of its life cycle.  
+What is the capital of Sri Lanka?  
+The capital of Sri Lanka is Sri Jayawardenepura Kotte.  
+What is a pathogen?  
+A pathogen is a microorganism that causes disease in its host, including bacteria, viruses, fungi, and parasites.  
+What is the significance of the human genome project?  
+The Human Genome Project aimed to map all the genes in the human genome, greatly advancing our understanding of genetics and medicine.  
+What is a glacier?  
+A glacier is a large mass of ice that moves slowly over land, formed from compacted snow over many years.  
+What is the capital of Morocco?  
+The capital of Morocco is Rabat.  
+What is the role of the digestive system?  
+The digestive system breaks down food, absorbs nutrients, and eliminates waste from the body.  
+What is a neutron?  
+A neutron is a subatomic particle found in the nucleus of an atom that has no electrical charge.  
+What is the significance of the Suez Canal?  
+The Suez Canal is a crucial waterway that connects the Mediterranean Sea to the Red Sea, facilitating international maritime trade.  
+What is a vaccine?  
+A vaccine is a biological preparation that provides acquired immunity to a particular infectious disease.  
+What is the capital of Afghanistan?  
+The capital of Afghanistan is Kabul.  
+What is a delta?  
+A delta is a landform created by the deposition of sediment at the mouth of a river, where it meets a body of water.  
+What is the primary function of the immune system?  
+The primary function of the immune system is to protect the body from infections and diseases by identifying and destroying pathogens.  
+What is the capital of Azerbaijan?  
+The capital of Azerbaijan is Baku.  
+What is a hydrocarbon?  
+A hydrocarbon is an organic compound composed solely of hydrogen and carbon, commonly found in fossil fuels.  
+What is the significance of the Panama Canal?  
+The Panama Canal is a man-made waterway that connects the Atlantic and Pacific Oceans, significantly reducing travel time for shipping.  
+What is a biome?  
+A biome is a large ecological area on the Earth's surface, with specific climates and ecosystems.  
+What is the capital of Georgia (the country)?  
+The capital of Georgia is Tbilisi.  
+What is an endothermic reaction?  
+An endothermic reaction is a chemical reaction that absorbs heat from its surroundings.  
+What is the primary role of the skeletal system?  
+The primary role of the skeletal system is to provide structure, support, and protection for the body's organs.  
+What is the capital of Malta?  
+The capital of Malta is Valletta.  
+What is a tectonic plate?  
+A tectonic plate is a large slab of rock that makes up the Earth's lithosphere and is responsible for geological activity such as earthquakes and volcanic eruptions.  
+What is the significance of the Great Wall of China?  
+The Great Wall of China was built to protect against invasions and symbolizes China's historical strength and resilience.  
+What is an antibiotic?  
+An antibiotic is a type of medication used to treat bacterial infections by killing or inhibiting the growth of bacteria.  
+What is the capital of Estonia?  
+The capital of Estonia is Tallinn.  
+What is the significance of the fall of the Berlin Wall?  
+The fall of the Berlin Wall in 1989 symbolized the end of the Cold War and the reunification of East and West Germany.  
+What is a cyclone?  
+A cyclone is a large-scale air mass that rotates around a strong center of low atmospheric pressure, often bringing heavy rain and winds.  
+What is the capital of Luxembourg?  
+The capital of Luxembourg is Luxembourg City.  
+What is a species?  
+A species is a group of organisms that can interbreed and produce fertile offspring, sharing common characteristics.  
+What is the significance of the Louisiana Purchase?  
+The Louisiana Purchase was a land deal between the United States and France in 1803 that doubled the size of the U.S.  
+What is a supernova?  
+A supernova is the explosive death of a star, resulting in a luminous burst that can outshine entire galaxies.  
+What is the capital of Slovakia?  
+The capital of Slovakia is Bratislava.  
+What is the role of the liver?  
+The liver processes nutrients from the digestive system, detoxifies harmful substances, and produces important proteins for blood clotting.  
+What is a solar panel?  
+A solar panel is a device that converts sunlight into electrical energy through the photovoltaic effect.  
+What is the capital of Cyprus?  
+The capital of Cyprus is Nicosia.  
+What is a comet?  
+A comet is a small celestial body made of ice, dust, and rocky material that, when close to the Sun, displays a glowing coma and tail.  
+What is the primary function of the respiratory system?  
+The primary function of the respiratory system is to facilitate the exchange of oxygen and carbon dioxide between the body and the environment.  
+What is the capital of Bosnia and Herzegovina?  
+The capital of Bosnia and Herzegovina is Sarajevo.  
+What is an electromagnet?  
+An electromagnet is a type of magnet in which the magnetic field is produced by an electric current.  
+What is the significance of the Treaty of Versailles?  
+The Treaty of Versailles ended World War I and imposed reparations on Germany, reshaping the geopolitical landscape of Europe.  
+What is a lichen?  
+A lichen is a symbiotic relationship between a fungus and an alga or cyanobacterium, often forming a crusty or leafy growth on rocks and trees.  
+What is the capital of Moldova?  
+The capital of Moldova is Chișinău.  
+What is a biome?  
+A biome is a large ecological area characterized by specific climate conditions, plant, and animal communities.  
+What is the primary function of the circulatory system?  
+The primary function of the circulatory system is to transport blood, nutrients, gases, and waste products throughout the body.  
+What is the capital of Belarus?  
+The capital of Belarus is Minsk.  
+What is a galaxy?  
+A galaxy is a massive system of stars, stellar remnants, interstellar gas, dust, and dark matter, bound together by gravity.  
+What is the role of DNA?  
+DNA carries the genetic instructions used in the growth, development, functioning, and reproduction of all known living organisms.  
+What is the capital of Qatar?  
+The capital of Qatar is Doha.  
+What is a tsunami?  
+A tsunami is a series of ocean waves caused by large disturbances, such as earthquakes or volcanic eruptions.  
+What is the significance of the Silk Road?  
+The Silk Road was an ancient trade route connecting the East and West, facilitating cultural, commercial, and technological exchange.  
+What is a neuron?  
+A neuron is a specialized cell that transmits nerve impulses throughout the nervous system.  
+What is the capital of Afghanistan?  
+The capital of Afghanistan is Kabul.  
+What is the primary role of the integumentary system?  
+The primary role of the integumentary system is to protect the body from external damage, regulate temperature, and provide sensory information.  
+What is the capital of Armenia?  
+The capital of Armenia is Yerevan.  
+What is a black hole?  
+A black hole is a region in space where the gravitational pull is so strong that nothing, not even light, can escape from it.  
+What is the significance of the Age of Enlightenment?  
+The Age of Enlightenment was an intellectual movement that emphasized reason, individualism, and skepticism of authority, leading to significant social and political changes.  
+What is a carnivore?  
+A carnivore is an animal that primarily eats meat.  
+What is the capital of Kosovo?  
+The capital of Kosovo is Pristina.  
+What is the significance of the discovery of penicillin?  
+The discovery of penicillin marked the beginning of modern antibiotics, revolutionizing medicine and saving countless lives.  
+What is a habitat?  
+A habitat is the natural environment in which a species or community of organisms lives and thrives.  
+What is the capital of Jamaica?  
+The capital of Jamaica is Kingston.  
+What is a pheromone?  
+A pheromone is a chemical substance produced and released into the environment by an animal, affecting the behavior or physiology of others of its species.  
+What is the primary purpose of the National Aeronautics and Space Administration (NASA)?  
+The primary purpose of NASA is to lead the nation's civil space program and aeronautics research.  
+What is the capital of Sudan?  
+The capital of Sudan is Khartoum.  
+What is a hydroelectric dam?  
+A hydroelectric dam is a facility that generates electricity by using the flow of water to turn turbines.  
+What is the significance of the Renaissance?  
+The Renaissance was a period of renewed interest in art, science, and classical learning in Europe, marking the transition from the Middle Ages to modernity.  
+What is a genotype?  
+A genotype is the genetic constitution of an individual organism, often referring to specific alleles at a particular gene locus.  
+What is the capital of Tanzania?  
+The capital of Tanzania is Dodoma.  
+What is a biome?  
+A biome is a large geographic area characterized by specific climatic conditions and ecosystems, such as deserts, forests, or grasslands.  
+What is the primary role of the pituitary gland?  
+The primary role of the pituitary gland is to produce and secrete hormones that regulate various bodily functions, including growth and metabolism.  
+What is the capital of Cyprus?  
+The capital of Cyprus is Nicosia.  
+What is a satellite?  
+A satellite is an object that orbits a planet or a star, which can be natural (like moons) or artificial (like man-made satellites).  
+What is the significance of the U.S. Constitution?  
+The U.S. Constitution is the supreme law of the United States, establishing the framework for the government and protecting individual rights.  
+What is a prism?  
+A prism is a transparent optical element that refracts light, separating it into its constituent colors.  
+What is the capital of Mongolia?  
+The capital of Mongolia is Ulaanbaatar.  
+What is the role of the ozone layer?  
+The ozone layer protects life on Earth by absorbing harmful ultraviolet (UV) radiation from the Sun.  
+What is a biome?  
+A biome is a large ecological area characterized by specific climates, plants, and animals.  
+What is the capital of Iceland?  
+The capital of Iceland is Reykjavík.  
+What is a synapse?  
+A synapse is the junction between two neurons where communication occurs through the transmission of neurotransmitters.  
+What is the capital of Latvia?  
+The capital of Latvia is Riga.  
+What is a volcano?  
+A volcano is an opening in the Earth's surface through which molten rock, ash, and gases erupt.  
+What is the significance of the Magna Carta?  
+The Magna Carta was a landmark document in 1215 that limited the powers of the king and laid the foundation for modern democracy.  
+What is a biome?  
+A biome is a large ecological area characterized by specific climates, plants, and animals.  
+What is the capital of Singapore?  
+The capital of Singapore is Singapore.  
+What is an ecosystem?  
+An ecosystem is a community of living organisms interacting with one another and their physical environment.  
+What is the capital of Sweden?  
+The capital of Sweden is Stockholm.  
+What is the role of the kidneys?  
+The kidneys filter waste products from the blood, regulate fluid balance, and maintain electrolyte levels.  
+What is a hypothesis?  
+A hypothesis is a proposed explanation for a phenomenon, subject to testing and experimentation.  
+What is the capital of South Korea?  
+The capital of South Korea is Seoul.  
+What is a biome?  
+A biome is a large ecological area characterized by distinct climate, flora, and fauna.  
+What is the capital of Norway?  
+The capital of Norway is Oslo.  
+What is the significance of the Cuban Missile Crisis?  
+The Cuban Missile Crisis was a 13-day confrontation in 1962 between the U.S. and the Soviet Union over the presence of missile sites in Cuba, bringing the world to the brink of nuclear war.  
+What is a protein?  
+A protein is a large molecule made up of amino acids that performs a wide range of functions in the body, including structural support, catalyzing reactions, and transporting molecules.  
+What is the capital of the Netherlands?  
+The capital of the Netherlands is Amsterdam.  
+What is a biome?  
+A biome is a large ecological area on Earth, characterized by distinct climate and ecosystems, such as forests, deserts, or grasslands.  
+What is the capital of Tunisia?  
+The capital of Tunisia is Tunis.  
+What is a chloroplast?  
+A chloroplast is a cell organelle found in plant cells that conducts photosynthesis, converting light energy into chemical energy.  
+What is the significance of the fall of the Roman Empire?  
+The fall of the Roman Empire in the 5th century marked the end of ancient Rome's dominance and the beginning of the Middle Ages in Europe.  
+What is a biome?  
+A biome is a large ecological area characterized by specific climate conditions, flora, and fauna.  
+What is the capital of Brazil?  
+The capital of Brazil is Brasília.  
+What is the primary function of the skeletal system?  
+The primary function of the skeletal system is to provide support, structure, and protection for the body's organs and tissues.  
+What is a glacier?  
+A glacier is a large mass of ice that moves slowly over land, formed from compacted snow.  
+What is the capital of Venezuela?  
+The capital of Venezuela is Caracas.  
+What is a biome?  
+A biome is a large ecological area characterized by specific climates, plants, and animals.  
+What is the capital of Armenia?  
+The capital of Armenia is Yerevan.  
+What is the role of the pancreas?  
+The pancreas produces enzymes and hormones, including insulin, that regulate blood sugar levels and aid in digestion.  
+What is the significance of the American Civil Rights Movement?  
+The American Civil Rights Movement aimed to end racial segregation and discrimination against African Americans, leading to significant legislative and social changes.  
+What is a neutron star?  
+A neutron star is a dense stellar remnant composed mostly of neutrons, formed after a supernova explosion.  
+What is the capital of Cyprus?  
+The capital of Cyprus is Nicosia.  
+What is a renewable resource?  
+A renewable resource is a natural resource that can be replenished naturally over time, such as sunlight, wind, and biomass.  
+What is the capital of Ethiopia?  
+The capital of Ethiopia is Addis Ababa.  
+What is a biome?  
+A biome is a large ecological area characterized by specific climate conditions, plants, and animals.  
+What is the capital of the United Kingdom?  
+The capital of the United Kingdom is London.  
+What is a karyotype?  
+A karyotype is a visual representation of an individual's complete set of chromosomes, used to examine chromosomal abnormalities.  
+What is the capital of Iraq?  
+The capital of Iraq is Baghdad.  
+What is a community in ecology?  
+A community in ecology refers to a group of different species that live together in a specific area and interact with each other.  
+What is the significance of the Enlightenment?  
+The Enlightenment was a philosophical movement in the 17th and 18th centuries that emphasized reason, individualism, and skepticism of authority, leading to advances in science, politics, and ethics.  
+What is a biome?  
+A biome is a large ecological area characterized by distinct climate, flora, and fauna.  
+What is the capital of Australia?  
+The capital of Australia is Canberra.  
+What is a glacier?  
+A glacier is a large mass of ice formed from compacted snow, moving slowly over land and shaping the landscape.  
+What is the significance of the Great Depression?  
+The Great Depression was a severe worldwide economic downturn in the 1930s that led to widespread unemployment, poverty, and significant changes in economic policy.  
+What is the best way to stay healthy?  
+The best way to stay healthy is to eat a balanced diet, exercise regularly, and get enough sleep.  
+What are some effective workout tips?  
+Some effective workout tips include setting realistic goals, mixing cardio and strength training, and finding activities you enjoy.  
+What are the benefits of meditation?  
+Meditation can reduce stress, improve focus, and enhance overall well-being.  
+What are the latest tech trends?  
+Some of the latest tech trends include artificial intelligence, virtual reality, and wearable technology.  
+How can I improve my coding skills?  
+To improve your coding skills, practice regularly, build projects, and seek feedback.  
+What are the top travel destinations for 2024?  
+Top travel destinations for 2024 include Japan, Italy, and New Zealand.  
+What should I consider when traveling abroad?  
+When traveling abroad, consider local customs, currency exchange, and safety.  
+What are the most fascinating facts about space?  
+Did you know that a day on Venus is longer than a year on Venus?  
+What is the importance of sleep for students?  
+Sleep is crucial for memory consolidation and cognitive function.  
+What are effective study habits?  
+Effective study habits include setting a schedule, breaking tasks into smaller parts, and minimizing distractions.  
+What is a good diet for mental health?  
+A good diet for mental health includes omega-3 fatty acids, antioxidants, and plenty of fruits and veggies.  
+What are the signs of a good teacher?  
+A good teacher inspires, engages, and supports their students.  
+What is the significance of the scientific method?  
+The scientific method is important because it provides a systematic way to investigate questions and test hypotheses.  
+What is the paradox of choice?  
+The paradox of choice states that having too many options can lead to anxiety and indecision, making it harder to choose.  
+How does the "liar paradox" work?  
+The liar paradox occurs when a statement refers to itself in a way that creates a contradiction, such as "This statement is false."  
+What is the "Ship of Theseus" paradox?  
+The Ship of Theseus raises the question of whether an object that has had all its parts replaced remains fundamentally the same object.  
+What is the "Trolley Problem"?  
+The Trolley Problem is an ethical dilemma that explores the consequences of choosing to save lives at the cost of others.  
+What is a paradox about happiness?  
+A common paradox about happiness is that the pursuit of happiness can sometimes lead to unhappiness; focusing on other goals can be more fulfilling.  
+What is the "bootstrap paradox"?  
+The bootstrap paradox is a time travel scenario where an item is sent back in time and becomes the source of itself, raising questions about causality.  
+What is the significance of the "chicken or egg" paradox?  
+The "chicken or egg" paradox questions the origins of causality, asking which came first in a cyclical relationship.  
+How does procrastination relate to the "time paradox"?  
+Procrastination exemplifies the time paradox where immediate gratification conflicts with long-term goals, creating a cycle of delay.  
+What is the "unexpected hanging paradox"?  
+The unexpected hanging paradox involves a judge sentencing a man to be hanged on a weekday without prior notice, challenging expectations of knowledge.  
+What is the "paradox of self-reference"?  
+The paradox of self-reference occurs when a statement refers to itself, leading to contradictions in logic and meaning.  
+What is the difference between qualitative and quantitative research?  
+Qualitative research focuses on understanding concepts and experiences, while quantitative research emphasizes numerical data and statistics.  
+What is the importance of a balanced diet?  
+A balanced diet provides essential nutrients for energy, growth, and overall health, helping to prevent diseases.  
+How can I improve my time management skills?  
+Improving time management skills can involve prioritizing tasks, setting deadlines, and using tools like calendars or apps to stay organized.  
+What are some common causes of stress?  
+Common causes of stress include work pressure, financial issues, and personal relationships, but remember that some stress can motivate us!  
+What is the significance of emotional intelligence?  
+Emotional intelligence is crucial for effective communication, relationship management, and conflict resolution in personal and professional settings.  
+How does climate change affect biodiversity?  
+Climate change threatens biodiversity by altering habitats, disrupting ecosystems, and leading to the extinction of vulnerable species.  
+What is the "paradox of thrift"?  
+The paradox of thrift suggests that while saving is beneficial for individuals, if everyone saves more during a recession, overall economic demand can decrease.  
+What are some effective strategies for public speaking?  
+Effective strategies for public speaking include practicing, knowing your audience, and using visual aids to enhance your message.  
+How does social media impact mental health?  
+Social media can impact mental health both positively and negatively, fostering connections while also contributing to anxiety and comparison.  
+What is the "sorites paradox"?  
+The sorites paradox arises from vague predicates, questioning at what point a heap of sand becomes not a heap when grains are removed.  
+How can I cultivate a growth mindset?  
+Cultivating a growth mindset involves embracing challenges, learning from criticism, and believing in the ability to improve through effort.  
+What is the "paradox of value"?  
+The paradox of value questions why some essential goods, like water, are cheap, while non-essentials, like diamonds, are expensive.  
+What are the health benefits of laughter?  
+Laughter can reduce stress, boost mood, and even improve immune function, making it a great addition to your daily routine.  
+What is the "grandfather paradox" in time travel?  
+The grandfather paradox questions what happens if a time traveler prevents their grandfather from meeting their grandmother, potentially erasing their own existence.  
+How does multitasking affect productivity?  
+Multitasking can lead to decreased productivity and increased errors, as switching tasks often disrupts focus and efficiency.  
+What are some common cognitive biases?  
+Common cognitive biases include confirmation bias, where we favor information that confirms our existing beliefs, and the Dunning-Kruger effect, where less competent individuals overestimate their ability.  
+What is the "paradox of choice"?  
+The paradox of choice states that having too many options can lead to decision paralysis and dissatisfaction with the choices made.  
+What role does gratitude play in mental health?  
+Practicing gratitude can enhance mental health by promoting positive emotions, reducing stress, and fostering resilience.  
+What is the "zeno's paradox"?  
+Zeno's paradox presents scenarios where motion seems impossible, such as the idea that to reach a destination, one must first reach the halfway point.  
+What are some strategies for effective teamwork?  
+Effective teamwork can be fostered through clear communication, defined roles, and building trust among team members.  
+What is the "paradox of plenty"?  
+The paradox of plenty suggests that regions rich in natural resources often experience less economic growth and worse development outcomes.  
 `;
