@@ -154,8 +154,21 @@ async function generateResponse(cleanedInput, posTags, namedEntities) {
         return ddgResponse;
     }
 
+    // Fallback to search Wikipedia if no response found
+    const wikipediaFallbackResponse = await searchWikipedia(cleanedInput);
+    if (wikipediaFallbackResponse) {
+        return wikipediaFallbackResponse;
+    }
+
     // If no response found, provide a default message
     return `Sorry, I couldn't find any specific information on that. Try asking me something different.`;
+}
+
+async function searchWikipedia(query) {
+    const keywords = encodeURIComponent(query);
+    const url = `https://en.wikipedia.org/w/index.php?search=${keywords}`;
+
+    return `Sorry, I couldn't find any specific information, but this may help: ${url}`;
 }
 
 async function queryWikidata(query) {
@@ -171,7 +184,7 @@ async function queryWikidata(query) {
         if (data.search && data.search.length > 0) {
             const item = data.search[0];
             const link = `https://www.wikidata.org/wiki/${item.id}`;
-            return `I found information about "<strong>${item.label}</strong>": ${item.description || 'No description available.'} <a href="${link}" target="_blank">More info</a> <br> <br> - Found this on Wikidata`;
+            return `I found information about "${item.label}": ${item.description || 'No description available.'} ${link} - Found this on Wikidata`;
         }
     } catch (error) {
         console.error('Error fetching from Wikidata:', error);
@@ -199,7 +212,7 @@ async function queryDuckDuckGo(query) {
         }
 
         if (result) {
-            return `${result} <br> <br> - Found this on DuckDuckGo`;
+            return `${result}] - Found this on DuckDuckGo`;
         }
     } catch (error) {
         console.error('Error fetching from DuckDuckGo:', error);

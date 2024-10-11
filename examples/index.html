@@ -146,23 +146,30 @@
         // This is recommeneded to import the AetherLex async because it would load the site faster 
     
         function appendMessage(message, type) {
-            const chatBox = document.getElementById('chat-box');
-            const messageContainer = document.createElement('div');
-            messageContainer.className = 'message-container';
-    
-            const label = document.createElement('div');
-            label.className = `label ${type === 'user' ? 'user-label' : 'ai-label'}`;
-            label.textContent = (type === 'user' ? 'You:' : 'AetherLex:');
-    
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${type}-message`;
-            messageDiv.innerHTML = message; // Allow HTML for links
-    
-            messageContainer.appendChild(label);
-            messageContainer.appendChild(messageDiv);
-            chatBox.appendChild(messageContainer);
-            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
-        }
+        const chatBox = document.getElementById('chat-box');
+        const messageContainer = document.createElement('div');
+        messageContainer.className = 'message-container';
+
+        const label = document.createElement('div');
+        label.className = `label ${type === 'user' ? 'user-label' : 'ai-label'}`;
+        label.textContent = (type === 'user' ? 'You:' : 'AetherLex:');
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}-message`;
+
+        // Convert plain text URLs to clickable links
+        messageDiv.innerHTML = convertUrlsToLinks(message);
+
+        messageContainer.appendChild(label);
+        messageContainer.appendChild(messageDiv);
+        chatBox.appendChild(messageContainer);
+        chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+    }
+
+    function convertUrlsToLinks(text) {
+        const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+        return text.replace(urlPattern, '<a href="$1" target="_blank" style="color: #0056b3; text-decoration: underline;">$1</a>');
+    }
     
         function showTypingIndicator() {
             const chatBox = document.getElementById('chat-box');
