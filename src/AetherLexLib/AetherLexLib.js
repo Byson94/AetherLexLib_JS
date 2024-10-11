@@ -9,7 +9,7 @@ import { learningDataProvided } from './data.js';
 import { stemmingData } from './data.stemming.js';
 import { lemmatizationData } from './data.lemmatization.js';
 import { posDictionary } from './data.tags.js';
-import { responses } from './responces.js';
+import { responses } from './responses.js';
 import Fuse from 'https://cdn.skypack.dev/fuse.js';
 import nlp from 'https://cdn.skypack.dev/compromise';
 
@@ -43,7 +43,7 @@ const parsedLearningData = parseLearningData(learningDataProvided);
 const fuse = new Fuse(parsedLearningData, {
     keys: ['userMessage'],
     includeScore: true,
-    threshold: 0.3,
+    threshold: 0.9,
     minMatchCharLength: 2,
     shouldSort: true,
 });
@@ -70,45 +70,13 @@ function lemmatizeWord(word) {
 
 function detectIntent(userInput) {
     const lowerCaseInput = userInput.toLowerCase();
-
-    // Check for greetings
-    if (responses.greetings.some(greeting => lowerCaseInput.includes(greeting))) {
-        return 'greetings';
-    }
-
-    // Check for farewells
-    if (responses.farewell.some(farewell => lowerCaseInput.includes(farewell))) {
-        return 'farewell';
-    }
-
-    // Check for affirmations
-    if (responses.affirmations.some(affirmation => lowerCaseInput.includes(affirmation))) {
-        return 'affirmations';
-    }
-
-    // Check for negations
-    if (responses.negations.some(negation => lowerCaseInput.includes(negation))) {
-        return 'negations';
-    }
-
-    // Check for gratitude
-    if (responses.gratitude.some(gratitude => lowerCaseInput.includes(gratitude))) {
-        return 'gratitude';
-    }
-
-    // Check for help requests
-    if (responses.help.some(help => lowerCaseInput.includes(help))) {
-        return 'help';
-    }
-
-    // Check for confusion
-    if (responses.confusion.some(confused => lowerCaseInput.includes(confused))) {
-        return 'confusion';
-    }
-
-    // Check for questions
-    if (responses.questions.some(question => lowerCaseInput.includes(question))) {
-        return 'questions';
+    const tokens = tokenize(lowerCaseInput);
+    
+    // Check for various intents using tokenized input
+    for (const [intent, phrases] of Object.entries(responses)) {
+        if (phrases.some(phrase => tokens.includes(phrase))) {
+            return intent;
+        }
     }
 
     // Check for calculations or math operations
@@ -116,9 +84,9 @@ function detectIntent(userInput) {
         return 'calculation';
     }
 
-    // Default case for unrecognized input
-    return 'unknown';
+    return 'unknown'; // Default for unrecognized input
 }
+
 
 function normalizeText(text) {
     const commonTypos = {
@@ -175,7 +143,16 @@ async function analyzeAndRespond(userInput) {
         const posTags = tagPartOfSpeech(lemmatizedTokens);
         const namedEntities = tagNamedEntities(cleanedInput);
 
-        const response = await generateResponse(cleanedInput, posTags, namedEntities);
+        // Detect intent and generate appropriate response
+        const intent = detectIntent(cleanedInput);
+        let response;
+
+        if (intent === 'unknown') {
+            response = await handleUnknownInput(cleanedInput);
+        } else {
+            response = await generateResponse(cleanedInput, intent, posTags, namedEntities);
+        }
+
         responses.push(response);
     }
 
@@ -183,9 +160,9 @@ async function analyzeAndRespond(userInput) {
 }
 
 // Generate appropriate response based on input analysis
-async function generateResponse(cleanedInput, posTags, namedEntities) {
+async function generateResponse(cleanedInput, intent, posTags, namedEntities) {
     // Check for mathematical calculations
-    if (isCalculation(cleanedInput)) {
+    if (intent === 'calculation') {
         return calculate(cleanedInput);
     }
 
@@ -214,6 +191,12 @@ async function generateResponse(cleanedInput, posTags, namedEntities) {
 
     // If no response found, provide a default message
     return `Sorry, I couldn't find any specific information on that. Try asking me something different.`;
+}
+
+async function handleUnknownInput(input) {
+    const grammarCheck = nlp(input).sentences().toNegative().text(); // Convert to negative for grammar checks.
+    const keywords = tokenize(input).join(' ');
+    return `I'm not sure how to respond to "${grammarCheck}". Could you rephrase that?`;
 }
 
 async function searchWikipedia(query) {
@@ -264,7 +247,7 @@ async function queryDuckDuckGo(query) {
         }
 
         if (result) {
-            return `${result}] - Found this on DuckDuckGo`;
+            return `${result} - Found this on DuckDuckGo`;
         }
     } catch (error) {
         console.error('Error fetching from DuckDuckGo:', error);
@@ -275,37 +258,29 @@ async function queryDuckDuckGo(query) {
 
 // Function to determine if the input is a calculation
 function isCalculation(input) {
-    // This pattern captures basic arithmetic operations (+, -, *, /) with numbers
-    const calculationPattern = /^(\d+(\.\d+)?(\s*[-+*/]\s*\d+(\.\d+)?)+)$/; 
-    return calculationPattern.test(input);
+    // This pattern is quite basic, adjust as necessary for more advanced use cases
+    return /[\d\s+/*-]+/.test(input);
 }
 
-
-// Function to perform calculations
-function calculate(expression) {
+// Function to perform a calculation based on user input
+function calculate(input) {
     try {
-        const result = new Function(`return ${expression}`)();
+        const result = eval(input); // Use eval carefully; validate input as needed
         return `The result is: ${result}`;
     } catch (error) {
-        return "Sorry, I couldn't calculate that.";
+        return `I encountered an error while calculating. Please check your input.`;
     }
 }
 
-// Find the best response from learning data or predefined responses
-function findBestLearningMatch(input) {
-    const result = fuse.search(input);
+// Function to find the best match for the learning data using Fuse.js
+function findBestLearningMatch(userInput) {
+    const normalizedInput = normalizeText(userInput);
+    const result = fuse.search(normalizedInput);
+    
     if (result.length > 0) {
-        return result[0].item.aiResponse;
+        return result[0].item.aiResponse;  // Return the best match
     }
-
-    // Fallback to predefined responses based on user input
-    for (const category in responses) {
-        if (responses[category].includes(input.toLowerCase())) {
-            return responses[category][Math.floor(Math.random() * responses[category].length)];
-        }
-    }
-
-    return null;
+    return null; // No match found
 }
 
 // Update context based on user input

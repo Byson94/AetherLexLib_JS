@@ -8,49 +8,56 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #343a40; /* Dark mode default */
-            color: #ffffff; /* Text color for dark mode */
+            background-color: #343a40;
+            color: #ffffff;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             overflow: hidden;
+            transition: background-color 0.5s, color 0.5s;
         }
         #chat-container {
             width: 100%;
-            height: 100vh;
+            max-width: 600px;
+            height: 80vh;
             border-radius: 8px;
-            background-color: #495057; /* Chat container background */
+            background-color: #495057;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            transform: scale(1);
+            transition: transform 0.3s ease-in-out;
         }
         #chat-box {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
-            background-color: #6c757d; /* Chat box background */
-            position: relative;
+            background-color: #6c757d;
             border-radius: 8px 8px 0 0;
+            transition: background-color 0.3s;
         }
         .message-container {
             margin-bottom: 15px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
         }
         .label {
             font-weight: bold;
             margin-bottom: 5px;
             padding: 5px 10px;
             border-radius: 5px;
-            display: inline-block; /* Only extend to the text width */
+            display: inline-block;
+            transition: background-color 0.3s;
         }
         .user-label {
-            background-color: #007bff; /* User label background */
+            background-color: #007bff;
             color: #fff;
         }
         .ai-label {
-            background-color: #28a745; /* AI label background */
+            background-color: #28a745;
             color: #fff;
         }
         .message {
@@ -58,17 +65,18 @@
             border-radius: 12px;
             max-width: 70%;
             line-height: 1.4;
-            transition: background 0.3s;
-        }
-        .user-message {
             background-color: #007bff;
             color: #fff;
-            align-self: flex-end;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
         .ai-message {
             background-color: #28a745;
             color: #fff;
             align-self: flex-start;
+        }
+        .user-message {
+            align-self: flex-end;
+            background-color: #007bff;
         }
         #input-container {
             display: flex;
@@ -81,12 +89,13 @@
             padding: 12px;
             border: none;
             border-radius: 20px;
-            transition: background 0.3s;
+            transition: background 0.3s, box-shadow 0.3s;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         #input-container input:focus {
             outline: none;
-            background-color: #fff; /* Change input background on focus */
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
         #input-container button {
             padding: 12px 20px;
@@ -96,10 +105,12 @@
             color: #fff;
             cursor: pointer;
             margin-left: 10px;
-            transition: background 0.3s;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         #input-container button:hover {
             background-color: #0056b3;
+            transform: scale(1.05);
         }
         #toggle-theme {
             position: absolute;
@@ -112,14 +123,25 @@
             border-radius: 20px;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            transition: background 0.3s;
+            transition: background 0.3s, transform 0.2s;
         }
         #toggle-theme:hover {
             background-color: #0056b3;
+            transform: scale(1.05);
         }
         .typing-indicator {
             font-style: italic;
-            color: #adb5bd; /* Lighter color for typing indicator */
+            color: #adb5bd;
+            animation: typing 1.5s infinite;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        @keyframes typing {
+            0% { opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { opacity: 0; }
         }
     </style>
 </head>
@@ -135,42 +157,39 @@
         </div>
     </div>
     <script type="module">
-        let analyzeAndRespond; // Declare a variable to hold the function
-    
+        let analyzeAndRespond;
+
         async function importAsync() {
             const module = await import('../src/AetherLexLib/AetherLexLib.js');
-            analyzeAndRespond = module.analyzeAndRespond; // Assign the function to the global variable
+            analyzeAndRespond = module.analyzeAndRespond;
         }
-    
-        importAsync(); 
-        // This is recommeneded to import the AetherLex async because it would load the site faster 
-    
+
+        importAsync();
+
         function appendMessage(message, type) {
-        const chatBox = document.getElementById('chat-box');
-        const messageContainer = document.createElement('div');
-        messageContainer.className = 'message-container';
+            const chatBox = document.getElementById('chat-box');
+            const messageContainer = document.createElement('div');
+            messageContainer.className = 'message-container';
 
-        const label = document.createElement('div');
-        label.className = `label ${type === 'user' ? 'user-label' : 'ai-label'}`;
-        label.textContent = (type === 'user' ? 'You:' : 'AetherLex:');
+            const label = document.createElement('div');
+            label.className = `label ${type === 'user' ? 'user-label' : 'ai-label'}`;
+            label.textContent = (type === 'user' ? 'You:' : 'AetherLex:');
 
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${type}-message`;
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.innerHTML = convertUrlsToLinks(message);
 
-        // Convert plain text URLs to clickable links
-        messageDiv.innerHTML = convertUrlsToLinks(message);
+            messageContainer.appendChild(label);
+            messageContainer.appendChild(messageDiv);
+            chatBox.appendChild(messageContainer);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
 
-        messageContainer.appendChild(label);
-        messageContainer.appendChild(messageDiv);
-        chatBox.appendChild(messageContainer);
-        chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
-    }
+        function convertUrlsToLinks(text) {
+            const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            return text.replace(urlPattern, '<a href="$1" target="_blank" style="color: #0056b3; text-decoration: underline;">$1</a>');
+        }
 
-    function convertUrlsToLinks(text) {
-        const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-        return text.replace(urlPattern, '<a href="$1" target="_blank" style="color: #0056b3; text-decoration: underline;">$1</a>');
-    }
-    
         function showTypingIndicator() {
             const chatBox = document.getElementById('chat-box');
             const typingIndicator = document.createElement('div');
@@ -179,7 +198,7 @@
             chatBox.appendChild(typingIndicator);
             return typingIndicator;
         }
-    
+
         async function handleUserInput() {
             const userInput = document.getElementById('user-input');
             const userText = userInput.value.trim();
@@ -199,33 +218,32 @@
                 }
             }
         }
-    
+
         function handleSend() {
             handleUserInput();
         }
-    
+
         function handleEnter(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
                 handleUserInput();
             }
         }
-    
+
         document.getElementById('send-button').addEventListener('click', handleSend);
         document.getElementById('user-input').addEventListener('keydown', handleEnter);
-    
+
         // Dark Mode Toggle
         const toggleThemeButton = document.getElementById('toggle-theme');
-        let darkMode = true; // Default to dark mode
-    
+        let darkMode = true;
+
         toggleThemeButton.addEventListener('click', () => {
             darkMode = !darkMode;
             document.body.style.backgroundColor = darkMode ? '#343a40' : '#e9ecef';
             document.body.style.color = darkMode ? '#ffffff' : '#000000';
-            document.getElementById('chat-container').style.backgroundColor = darkMode ? '#495057' : '#fff';
-            document.getElementById('chat-box').style.backgroundColor = darkMode ? '#6c757d' : '#f8f9fa';
-            toggleThemeButton.textContent = darkMode ? 'Toggle Light Mode' : 'Toggle Dark Mode';
+            document.getElementById('chat-container').style.backgroundColor = darkMode ? '#495057' : '#f8f9fa';
+            document.getElementById('chat-box').style.backgroundColor = darkMode ? '#6c757d' : '#ced4da';
         });
-    </script>    
+    </script>
 </body>
 </html>

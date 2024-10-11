@@ -7,8 +7,8 @@ Understood! If there's anything else you'd like to discuss, let me know.
 How are you?
 I am functioning optimally. How can I assist you today?
 Good. Do you speak English?
-Affirmative. I am programmed to understand and generate English.
-A little. Are you American?
+I am programmed to understand and generate English.
+Are you American?
 I do not have a nationality. I am an artificial intelligence.
 Yes.
 Acknowledged.
