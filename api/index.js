@@ -69,7 +69,7 @@ app.get('/', (req, res) => {
 
 // Sample endpoint to analyze a message
 app.post('/api/analyze', async (req, res) => {
-    const { analyzedResult } = req.body;
+    const { analyzedResult, isJson } = req.body; // Check for isJson property
 
     // Basic validation
     if (!analyzedResult) {
@@ -80,13 +80,19 @@ app.post('/api/analyze', async (req, res) => {
         // Simulating the use of AetherLexLib.js on the server side
         const processedResult = await someFunctionUsingAetherLexLib(analyzedResult); // Replace with actual function
 
-        // Send the processed result back as JSON
-        res.status(200).json({ processedResult });
+        // Check if isJson is false, send plain string response
+        if (isJson === false) {
+            res.status(200).send(processedResult); // Send as plain string
+        } else {
+            // Send the processed result back as JSON
+            res.status(200).json({ processedResult }); 
+        }
     } catch (error) {
         console.error('Error during analysis:', error);
         res.status(500).json({ error: 'An error occurred while processing the analyzed result' });
     }
 });
+
 
 // Placeholder function for processing with AetherLexLib.js
 import { analyzeAndRespond } from '../src/AetherLexLib/AetherLexLib.js';
