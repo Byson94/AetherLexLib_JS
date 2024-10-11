@@ -2,6 +2,7 @@
   "name": "aetherlexlib_js",
   "version": "0.3.0",
   "description": "An AI library",
+  "type": "module",
   "main": "src/AetherLexLib/AetherLexLib.js",
   "directories": {
     "example": "examples"
@@ -23,6 +24,9 @@
   },
   "homepage": "https://github.com/Byson94/AetherLexLib_JS#readme",
   "dependencies": {
-    "compromise": "^14.14.0"
+    "compromise": "^14.14.2",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "fuse.js": "^7.0.0"
   }
 }

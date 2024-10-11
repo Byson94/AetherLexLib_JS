@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #response {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h3>Test API</h3>
+    <input type="text" id="message" placeholder="Enter your message" required />
+    <button id="send">Send</button>
+
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('send').addEventListener('click', async () => {
+            const message = document.getElementById('message').value.trim(); // Trim whitespace
+            const responseDiv = document.getElementById('response');
+
+            // Clear previous response
+            responseDiv.innerHTML = '';
+
+            // Validate input
+            if (!message) {
+                responseDiv.innerHTML = '<p>Please enter a message.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ analyzedResult:message }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                responseDiv.innerHTML = `<p>Response: ${JSON.stringify(data.processedResult)}</p>`;
+            } catch (error) {
+                responseDiv.innerHTML = `<p>${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

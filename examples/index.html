@@ -135,7 +135,15 @@
         </div>
     </div>
     <script type="module">
-        import { analyzeAndRespond } from '../src/AetherLexLib/AetherLexLib.js';
+        let analyzeAndRespond; // Declare a variable to hold the function
+    
+        async function importAsync() {
+            const module = await import('../src/AetherLexLib/AetherLexLib.js');
+            analyzeAndRespond = module.analyzeAndRespond; // Assign the function to the global variable
+        }
+    
+        importAsync(); 
+        // This is recommeneded to import the AetherLex async because it would load the site faster 
     
         function appendMessage(message, type) {
             const chatBox = document.getElementById('chat-box');
@@ -211,6 +219,6 @@
             document.getElementById('chat-box').style.backgroundColor = darkMode ? '#6c757d' : '#f8f9fa';
             toggleThemeButton.textContent = darkMode ? 'Toggle Light Mode' : 'Toggle Dark Mode';
         });
-    </script>
+    </script>    
 </body>
 </html>
