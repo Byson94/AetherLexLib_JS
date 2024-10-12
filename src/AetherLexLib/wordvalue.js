@@ -1,8 +1,6 @@
 // wordvalue.js
 
-// wordvalue.js
-
-const wordValues = {
+export const wordValues = {
     "a": 1,
     "an": 2,
     "and": 3,
@@ -1224,4 +1222,3 @@ const wordValues = {
     "zoo": 1220
 };
 
-export default wordValues;
