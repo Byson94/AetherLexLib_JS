@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentence Understander</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Sentence Understander</h1>
+    <textarea id="inputText" placeholder="Type your sentence here..."></textarea>
+    <button id="submitBtn">Get Meaning</button>
+    
+    <div id="response"></div>
+
+    <script type="module">
+        import { analyzeSentence } from './ai.js';
+
+        const submitBtn = document.getElementById('submitBtn');
+        const inputText = document.getElementById('inputText');
+        const responseDiv = document.getElementById('response');
+
+        submitBtn.addEventListener('click', async () => {
+            const userInput = inputText.value;
+            const meaning = await analyzeSentence(userInput);
+            responseDiv.innerText = `AI Meaning: ${meaning}`;
+        });
+    </script>
+</body>
+</html>
