@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AetherLexLib tests</title>
+    <link rel="icon" href="../Logo.png" type="image/png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #343a40;
+            color: #ffffff;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        #chat-container {
+            width: 100%;
+            max-width: 600px;
+            height: 80vh;
+            border-radius: 8px;
+            background-color: #495057;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(1);
+            transition: transform 0.3s ease-in-out;
+        }
+        #chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #6c757d;
+            border-radius: 8px 8px 0 0;
+            transition: background-color 0.3s;
+        }
+        .message-container {
+            margin-bottom: 15px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        .label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        .user-label {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .ai-label {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .message {
+            padding: 12px 15px;
+            border-radius: 12px;
+            max-width: 70%;
+            line-height: 1.4;
+            background-color: #007bff;
+            color: #fff;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .ai-message {
+            background-color: #28a745;
+            color: #fff;
+            align-self: flex-start;
+        }
+        .user-message {
+            align-self: flex-end;
+            background-color: #007bff;
+        }
+        #input-container {
+            display: flex;
+            padding: 10px;
+            background-color: #495057;
+            border-top: 1px solid #ccc;
+        }
+        #input-container input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 20px;
+            transition: background 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        #input-container input:focus {
+            outline: none;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        #input-container button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 20px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        #input-container button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        #toggle-theme {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s, transform 0.2s;
+        }
+        #toggle-theme:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        .typing-indicator {
+            font-style: italic;
+            color: #adb5bd;
+            animation: typing 1.5s infinite;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        @keyframes typing {
+            0% { opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <button id="toggle-theme">Toggle Light Mode</button>
+    <div id="chat-container">
+        <div id="chat-box" aria-live="polite">
+            <!-- Messages will appear here -->
+        </div>
+        <div id="input-container">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button id="send-button">test</button>
+        </div>
+    </div>
+    <script type="module">
+        let analyzeAndRespond;
+
+        async function importAsync() {
+            const module = await import('./AetherLexLib.js');
+            analyzeAndRespond = module.analyzeAndRespond;
+        }
+
+        importAsync();
+
+        function appendMessage(message, type) {
+            const chatBox = document.getElementById('chat-box');
+            const messageContainer = document.createElement('div');
+            messageContainer.className = 'message-container';
+
+            const label = document.createElement('div');
+            label.className = `label ${type === 'user' ? 'user-label' : 'ai-label'}`;
+            label.textContent = (type === 'user' ? 'You:' : 'AetherLex:');
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.innerHTML = convertUrlsToLinks(message);
+
+            messageContainer.appendChild(label);
+            messageContainer.appendChild(messageDiv);
+            chatBox.appendChild(messageContainer);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function convertUrlsToLinks(text) {
+            const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            return text.replace(urlPattern, '<a href="$1" target="_blank" style="color: #0056b3; text-decoration: underline;">$1</a>');
+        }
+
+        function showTypingIndicator() {
+            const chatBox = document.getElementById('chat-box');
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'message ai-message typing-indicator';
+            typingIndicator.textContent = 'AI is typing...';
+            chatBox.appendChild(typingIndicator);
+            return typingIndicator;
+        }
+
+        async function handleUserInput() {
+            const userInput = document.getElementById('user-input');
+            const userText = userInput.value.trim();
+            const chatBox = document.getElementById('chat-box');
+            if (userText) {
+                appendMessage(userText, 'user');
+                userInput.value = '';
+                const typingIndicator = showTypingIndicator();
+                try {
+                    const response = await analyzeAndRespond(userText);
+                    chatBox.removeChild(typingIndicator);
+                    appendMessage(response, 'ai');
+                } catch (error) {
+                    console.error('Error processing response:', error);
+                    chatBox.removeChild(typingIndicator);
+                    appendMessage("Sorry, something went wrong.", 'ai');
+                }
+            }
+        }
+
+        function handleSend() {
+            handleUserInput();
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                handleUserInput();
+            }
+        }
+
+        document.getElementById('send-button').addEventListener('click', handleSend);
+        document.getElementById('user-input').addEventListener('keydown', handleEnter);
+
+        // Dark Mode Toggle
+        const toggleThemeButton = document.getElementById('toggle-theme');
+        let darkMode = true;
+
+        toggleThemeButton.addEventListener('click', () => {
+            darkMode = !darkMode;
+            document.body.style.backgroundColor = darkMode ? '#343a40' : '#e9ecef';
+            document.body.style.color = darkMode ? '#ffffff' : '#000000';
+            document.getElementById('chat-container').style.backgroundColor = darkMode ? '#495057' : '#f8f9fa';
+            document.getElementById('chat-box').style.backgroundColor = darkMode ? '#6c757d' : '#ced4da';
+        });
+    </script>
+</body>
+</html>

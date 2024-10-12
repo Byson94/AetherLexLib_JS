@@ -10,12 +10,14 @@ import { stemmingData } from './data.stemming.js';
 import { lemmatizationData } from './data.lemmatization.js';
 import { posDictionary } from './data.tags.js';
 import { responses } from './responses.js';
+import { wordValues } from './wordvalue.js';
 import Fuse from 'https://cdn.skypack.dev/fuse.js';
 import nlp from 'https://cdn.skypack.dev/compromise';
 
 let conversationData = {
     history: [],
-    context: {}
+    context: {},
+    wordUsage: {}
 };
 
 // Parse learning data into structured format
@@ -73,7 +75,12 @@ function normalizeText(text) {
         "yu": "you",
         "u": "you",
         "r": "are",
-        "wat": "what"
+        "wat": "what",
+        "is": "s",
+        "this": "ths",
+        "that": "tht",
+        "hey": "hy",
+        "duck": "dukc"
     };
     
     let normalized = text.toLowerCase().replace(/[.,!?]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -105,30 +112,104 @@ function tagNamedEntities(input) {
     return entities;
 }
 
+// Initialize uniqueValueCounter based on the current highest unique value
+let uniqueValueCounter = Object.keys(wordValues).length > 0 ? Math.max(...Object.values(wordValues)) + 1 : 1221;
+
+function getWordValue(word) {
+
+    // Check if the word is in the wordValues object
+    if (wordValues[word]) {
+        return wordValues[word]; // Return the existing value
+    } else {
+        // If the word is not found
+        const uniqueValue = uniqueValueCounter++;
+        wordValues[word] = uniqueValue; // Assign the unique value to the new word
+        return 0; // Return 0 for not found
+    }
+}
+
+// Update tokenize function to return words with their values
+function tokenizeWithValues(text) {
+    const stopWords = new Set(["who", "what", "when", "where", "why", "is", "the", "a", "of", "on", "and", "for", "with", "to", "from", "by"]);
+    const words = text.toLowerCase().match(/\w+/g) || []; 
+    return words
+        .filter(word => !stopWords.has(word))
+        .map(word => ({ word, value: getWordValue(word) })); // Return an object with word and its value
+}
+
+
 // Main function to analyze user input and generate response
 async function analyzeAndRespond(userInput) {
-    const segmentedInput = segmentSentences(userInput); 
+    const segmentedInput = segmentSentences(userInput);
     const responses = [];
 
     for (const segment of segmentedInput) {
         const cleanedInput = normalizeText(segment);
-        
+
         // Update context based on user input
         checkContext(cleanedInput);
-        
+
         // NLP processing
-        const tokens = tokenize(cleanedInput);
-        const stemmedTokens = tokens.map(stemWord);
+        const tokensWithValues = tokenizeWithValues(cleanedInput);
+        const stemmedTokens = tokensWithValues.map(token => stemWord(token.word));
         const lemmatizedTokens = stemmedTokens.map(lemmatizeWord);
+
+        // Track word usage
+        trackWordUsage(tokensWithValues);
+
         const posTags = tagPartOfSpeech(lemmatizedTokens);
         const namedEntities = tagNamedEntities(cleanedInput);
 
-        const response = await generateResponse(cleanedInput, posTags, namedEntities);
+        // Decide whether to search for information
+        const shouldSearch = predictSearchNeed(cleanedInput);
+
+        let response;
+        if (shouldSearch) {
+            response = await generateResponse(cleanedInput, posTags, namedEntities);
+        } else {
+            response = findBestLearningMatch(cleanedInput) || "Sorry, I couldn't find any specific information on that. Try asking me something different.";
+        }
+
         responses.push(response);
     }
 
     return responses.join(' ');
 }
+
+// Function to predict whether to search for information
+function predictSearchNeed(input) {
+    const searchKeywords = ['what', 'who', 'when', 'where', 'why', 'how', 'explain', 'define', 'tell me about'];
+    const intentKeywords = ['recommend', 'suggest', 'need', 'want', 'like', 'prefer'];
+    const lowerInput = input.toLowerCase();
+
+    // Check for search intent
+    const isSearchIntent = searchKeywords.some(keyword => lowerInput.includes(keyword));
+    // Check for action intent
+    const isActionIntent = intentKeywords.some(keyword => lowerInput.includes(keyword));
+
+    return isSearchIntent || isActionIntent;
+}
+
+// Function to track word usage
+function trackWordUsage(tokens) {
+    for (const { word } of tokens) {
+        if (conversationData.wordUsage[word]) {
+            conversationData.wordUsage[word]++;
+        } else {
+            conversationData.wordUsage[word] = 1;
+        }
+    }
+}
+
+// Define fallback responses
+const fallbackResponses = [
+    "Hmm, I'm not sure about that. Can you ask me something else?",
+    "That's an interesting question! Unfortunately, I don't have the answer at the moment.",
+    "I wish I could help with that, but I need a bit more information.",
+    "It seems I don't have the answer you're looking for. Want to try a different question?",
+    "I can't find that information right now. Maybe ask me something else?",
+    "I'm still learning! If you have a different question, I'd love to help."
+];
 
 // Generate appropriate response based on input analysis
 async function generateResponse(cleanedInput, posTags, namedEntities) {
@@ -154,15 +235,13 @@ async function generateResponse(cleanedInput, posTags, namedEntities) {
         return ddgResponse;
     }
 
-    // Fallback to search Wikipedia if no response found
-    const wikipediaFallbackResponse = await searchWikipedia(cleanedInput);
-    if (wikipediaFallbackResponse) {
-        return wikipediaFallbackResponse;
-    }
+    // Select a random fallback response
+    const randomFallback = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
 
-    // If no response found, provide a default message
-    return `Sorry, I couldn't find any specific information on that. Try asking me something different.`;
+    // Provide a default message that only includes the Wikipedia search if previous searches failed
+    return `${randomFallback} ${await searchWikipedia(cleanedInput)}`;
 }
+
 
 async function searchWikipedia(query) {
     const keywords = encodeURIComponent(query);
@@ -236,6 +315,22 @@ function calculate(expression) {
         return "Sorry, I couldn't calculate that.";
     }
 }
+
+// Function to get the most used word
+function getMostUsedWord() {
+    let maxCount = 0;
+    let mostUsedWord = '';
+
+    for (const [word, count] of Object.entries(conversationData.wordUsage)) {
+        if (count > maxCount) {
+            maxCount = count;
+            mostUsedWord = word;
+        }
+    }
+
+    return mostUsedWord ? { word: mostUsedWord, count: maxCount, value: getWordValue(mostUsedWord) } : null;
+}
+
 
 // Find the best response from learning data or predefined responses
 function findBestLearningMatch(input) {
