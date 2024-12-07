@@ -14,11 +14,86 @@ import { wordValues } from './wordvalue.js';
 import Fuse from 'https://cdn.skypack.dev/fuse.js';
 import nlp from 'https://cdn.skypack.dev/compromise';
 
+// Load TensorFlow.js asynchronously
+let tf;
+(async () => {
+    tf = await import('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js');
+    console.log("TensorFlow.js loaded successfully!");
+    await trainModel();
+})();
+
 let conversationData = {
     history: [],
     context: {},
     wordUsage: {}
 };
+
+// Tokenization and text preprocessing (normalize, lemmatize)
+function preprocessText(text) {
+    let doc = nlp(text);
+    return doc
+        .terms()
+        .map(term => term.root) // Lemmatization: convert terms to their base form
+        .join(' ');
+}
+
+// Prepare the learning data for training
+function prepareLearningData() {
+    const data = learningDataProvided.split("\n").filter(line => line.trim() !== "");
+    let inputData = [];
+    let outputData = [];
+
+    // Split the data into input-output pairs
+    for (let i = 0; i < data.length; i += 2) {
+        if (data[i + 1]) {
+            const inputText = preprocessText(data[i]);
+            const outputText = preprocessText(data[i + 1]);
+            inputData.push(inputText);
+            outputData.push(outputText);
+        }
+    }
+
+    return { inputData, outputData };
+}
+
+// Train a simple TensorFlow.js model
+async function trainModel() {
+    const { inputData, outputData } = prepareLearningData();
+    
+    // Create vocabulary from the input and output
+    const vocabulary = [...new Set(inputData.concat(outputData).join(' ').split(' '))];
+    const vocabSize = vocabulary.length;
+    const wordIndex = vocabulary.reduce((acc, word, idx) => ({ ...acc, [word]: idx }), {});
+
+    // Convert input data to numerical format (sequences of indices)
+    const inputSequences = inputData.map(input => {
+        return input.split(' ').map(word => wordIndex[word] || 0); // 0 for unknown words
+    });
+
+    // Convert output data to numerical format (sequences of indices)
+    const outputSequences = outputData.map(output => {
+        return output.split(' ').map(word => wordIndex[word] || 0); // 0 for unknown words
+    });
+
+    // Define the model architecture
+    const model = tf.sequential();
+    model.add(tf.layers.embedding({ inputDim: vocabSize, outputDim: 128, inputLength: Math.max(...inputSequences.map(seq => seq.length)) }));
+    model.add(tf.layers.lstm({ units: 128, returnSequences: false }));
+    model.add(tf.layers.dense({ units: vocabSize, activation: 'softmax' }));
+
+    // Compile the model
+    model.compile({ optimizer: 'adam', loss: 'sparseCategoricalCrossentropy', metrics: ['accuracy'] });
+
+    // Convert sequences to tensors
+    const inputTensor = tf.tensor2d(inputSequences);
+    const outputTensor = tf.tensor2d(outputSequences);
+
+    // Train the model
+    await model.fit(inputTensor, outputTensor, { epochs: 10, batchSize: 64 });
+    console.log('Model training complete!');
+    
+    return model;
+}
 
 // Parse learning data into structured format
 function parseLearningData(data) {
@@ -175,6 +250,8 @@ async function analyzeAndRespond(userInput) {
 
     return responses.join(' ');
 }
+
+
 
 // Function to predict whether to search for information
 function predictSearchNeed(input) {
